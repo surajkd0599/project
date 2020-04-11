@@ -2,8 +2,6 @@ package com.example.project.ecommerce.repos;
 
 import com.example.project.ecommerce.model.Product;
 import com.example.project.ecommerce.model.ProductCategory;
-import com.sun.corba.se.spi.ior.ObjectKey;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
