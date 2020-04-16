@@ -9,7 +9,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long addressId;
+    private Long id;
 
     @Column(name = "user_id")
     private Long userId;
@@ -127,12 +127,12 @@ public class Address {
         this.zipCode = zipCode;
     }
 
-    public Long getAddressId() {
-        return addressId;
+    public Long getId() {
+        return id;
     }
 
-    public void setAddressId(Long addressId) {
-        this.addressId = addressId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isDeleted() {
@@ -157,13 +157,13 @@ public class Address {
         if (o == null || getClass() != o.getClass()) return false;
         Address address = (Address) o;
         return plotNumber == address.plotNumber &&
-                Objects.equals(addressId, address.addressId) &&
+                Objects.equals(id, address.id) &&
                 Objects.equals(label, address.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(addressId, plotNumber, label);
+        return Objects.hash(id, plotNumber, label);
     }
 
     @Override

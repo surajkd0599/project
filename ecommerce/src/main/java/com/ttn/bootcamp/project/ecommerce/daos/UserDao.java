@@ -5,7 +5,7 @@ import com.ttn.bootcamp.project.ecommerce.models.AppUser;
 import com.ttn.bootcamp.project.ecommerce.models.GrantedAuthorityImpl;
 import com.ttn.bootcamp.project.ecommerce.models.Role;
 import com.ttn.bootcamp.project.ecommerce.models.User;
-import com.ttn.bootcamp.project.ecommerce.repos.UserRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,14 +15,15 @@ import java.util.List;
 @Repository
 public class UserDao {
     @Autowired
-    UserRepository userRepository;
+    UserRepo userRepo;
 
     public AppUser loadUserByUsername(String username) {
-        User user = userRepository.findByEmail(username);
+        User user = userRepo.findByEmail(username);
         System.out.println(user.getPassword());
+        System.out.println("User with authority : "+user+"    "+username);
 
         List<GrantedAuthorityImpl> grantedAuthorityImpl = new ArrayList<>();
-        System.out.println(user);
+
         if(user.isActive()) {
             if (username != null) {
                 for (Role auth : user.getRoles()) {

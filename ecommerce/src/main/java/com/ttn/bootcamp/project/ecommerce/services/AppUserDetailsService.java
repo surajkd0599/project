@@ -3,6 +3,7 @@ package com.ttn.bootcamp.project.ecommerce.services;
 import com.ttn.bootcamp.project.ecommerce.daos.UserDao;
 import com.ttn.bootcamp.project.ecommerce.dtos.CustomerDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.SellerDto;
+import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.models.*;
 import com.ttn.bootcamp.project.ecommerce.repos.*;
 import org.springframework.beans.BeanUtils;
@@ -27,14 +28,12 @@ public class AppUserDetailsService implements UserDetailsService {
     @Autowired
     UserDao userDao;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerRepo customerRepo;
 
     @Autowired
-    private SellerRepository sellerRepository;
+    private SellerRepo sellerRepo;
 
     @Autowired
     private AdminRepo adminRepo;
@@ -47,6 +46,7 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Transactional
     public String registerCustomer(CustomerDto customerDto){
+
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerDto, customer);
         String pass = passwordEncoder.encode(customer.getPassword());
@@ -57,7 +57,7 @@ public class AppUserDetailsService implements UserDetailsService {
         customer.setPassword(pass);
         customer.setRoles(roles);
 
-        customerRepository.save(customer);
+        customerRepo.save(customer);
 
         String token = UUID.randomUUID().toString();
 
@@ -83,10 +83,10 @@ public class AppUserDetailsService implements UserDetailsService {
         if(seller.getAddresses().size() == 1) {
             String pass = passwordEncoder.encode(seller.getPassword());
             seller.setPassword(pass);
-            sellerRepository.save(seller);
+            sellerRepo.save(seller);
             return "Registration Successful";
         }else {
-            return "Seller cannot have multiple addresses";
+            throw new BadRequestException("Seller cannot have multiple addresses");
         }
     }
 

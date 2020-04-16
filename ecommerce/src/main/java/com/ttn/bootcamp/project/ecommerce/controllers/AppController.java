@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("/ecommerce/app")
+@RequestMapping("/app")
 public class AppController {
 
     @Autowired

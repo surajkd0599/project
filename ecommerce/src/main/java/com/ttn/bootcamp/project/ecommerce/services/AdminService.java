@@ -1,12 +1,14 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
+import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.models.Admin;
 import com.ttn.bootcamp.project.ecommerce.models.Customer;
 import com.ttn.bootcamp.project.ecommerce.models.Seller;
 import com.ttn.bootcamp.project.ecommerce.models.User;
-import com.ttn.bootcamp.project.ecommerce.repos.CustomerRepository;
-import com.ttn.bootcamp.project.ecommerce.repos.SellerRepository;
-import com.ttn.bootcamp.project.ecommerce.repos.UserRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.CustomerRepo;
+import com.ttn.bootcamp.project.ecommerce.repos.SellerRepo;
+import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -24,55 +26,69 @@ import java.util.Optional;
 public class AdminService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepo;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerRepo customerRepo;
 
     @Autowired
-    private SellerRepository sellerRepository;
+    private SellerRepo sellerRepo;
 
     @Autowired
     private SendEmail sendEmail;
 
-    public MappingJacksonValue registeredCustomers(String page,String size, String SortBy){
-        List<Customer> customers = customerRepository.findAll(PageRequest.of(Integer.parseInt(page),Integer.parseInt(size), Sort.by(SortBy))).getContent();
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("userId","firstName","lastName","email","active");
-        FilterProvider filterProvider =  new SimpleFilterProvider().addFilter("CustomerFilter",filter);
+    public MappingJacksonValue registeredCustomers(Long id, String page,String size, String SortBy){
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customers);
+        Optional<User> admin = userRepo.findById(id);
 
-        mappingJacksonValue.setFilters(filterProvider);
-        return mappingJacksonValue;
+        if(admin.isPresent()) {
+            List<Customer> customers = customerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active");
+            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("CustomerFilter", filter);
+
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customers);
+
+            mappingJacksonValue.setFilters(filterProvider);
+            return mappingJacksonValue;
+        }else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 
-    public MappingJacksonValue registeredSellers(String page,String size, String SortBy){
-        List<Seller> sellers = sellerRepository.findAll(PageRequest.of(Integer.parseInt(page),Integer.parseInt(size), Sort.by(SortBy))).getContent();
+    public MappingJacksonValue registeredSellers(Long id,String page,String size, String SortBy){
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("userId","firstName","lastName","email","active","companyName","companyContact","addresses");
-        FilterProvider filterProvider =  new SimpleFilterProvider().addFilter("Seller-Filter",filter);
+        Optional<User> admin = userRepo.findById(id);
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellers);
+        if(admin.isPresent()) {
+            List<Seller> sellers = sellerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
 
-        mappingJacksonValue.setFilters(filterProvider);
-        return mappingJacksonValue;
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active", "companyName", "companyContact", "addresses");
+            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Seller-Filter", filter);
+
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellers);
+
+            mappingJacksonValue.setFilters(filterProvider);
+            return mappingJacksonValue;
+        }else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 
     @Transactional
     public String activateUser(Long userId){
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepo.findById(userId);
         StringBuilder sb = new StringBuilder();
 
         if(user.isPresent()){
             boolean flag = user.get().isActive();
             if(!flag){
                 user.get().setActive(true);
-                userRepository.save(user.get());
+                userRepo.save(user.get());
                 sendEmail.sendEmail("Account Activation","Your account is successfully activated",
                         user.get().getEmail());
                 sb.append("Account activated");
             }else {
-                sb.append("User is already activated");
+                throw new BadRequestException("User is already activated");
             }
         }else {
             throw new UserNotFoundException("User not found");
@@ -82,19 +98,19 @@ public class AdminService {
 
     @Transactional
     public String deactivateUser(Long userId){
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepo.findById(userId);
         StringBuilder sb = new StringBuilder();
 
         if(user.isPresent()){
             boolean flag = user.get().isActive();
             if(flag){
                 user.get().setActive(false);
-                userRepository.save(user.get());
+                userRepo.save(user.get());
                 sendEmail.sendEmail("Account De-Activation","Your account is successfully de-activated",
                         user.get().getEmail());
                 sb.append("Account de-activated");
             }else {
-                sb.append("User is already de-activated");
+               throw new BadRequestException("User is already deActivated");
             }
         }else {
             throw new UserNotFoundException("User not found");

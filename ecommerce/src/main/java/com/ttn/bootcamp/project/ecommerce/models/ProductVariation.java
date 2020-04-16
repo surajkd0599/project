@@ -11,62 +11,16 @@ public class ProductVariation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long variationId;
-    private String color;
-    private String size;
+    private Long id;
     private Long price;
-    private String gender;
     private JSONObject metadata;
-    private int stock;
-    private String brand;
+    private int quantity;
+    private boolean isActive;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private List<ProductReview> review;
-
-    public Long getVariationId() {
-        return variationId;
-    }
-
-    public void setVariationId(Long variationId) {
-        this.variationId = variationId;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public ProductVariation() {
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 
     public Long getPrice() {
         return price;
@@ -76,12 +30,36 @@ public class ProductVariation {
         this.price = price;
     }
 
-    public String getBrand() {
-        return brand;
+    public JSONObject getMetadata() {
+        return metadata;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setMetadata(JSONObject metadata) {
+        this.metadata = metadata;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public List<ProductReview> getReview() {
@@ -90,13 +68,5 @@ public class ProductVariation {
 
     public void setReview(List<ProductReview> review) {
         this.review = review;
-    }
-
-    public JSONObject getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(JSONObject metadata) {
-        this.metadata = metadata;
     }
 }

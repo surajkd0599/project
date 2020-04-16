@@ -9,7 +9,7 @@ public class VerificationToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long tokenId;
+    private Long id;
     private String token;
     private String userEmail;
     private Date generatedDate;
@@ -21,12 +21,12 @@ public class VerificationToken {
         return EXPIRATION;
     }
 
-    public Long getTokenId() {
-        return tokenId;
+    public Long getId() {
+        return id;
     }
 
-    public void setTokenId(Long tokenId) {
-        this.tokenId = tokenId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getToken() {

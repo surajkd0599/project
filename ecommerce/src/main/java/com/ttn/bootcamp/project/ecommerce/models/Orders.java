@@ -9,7 +9,7 @@ public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long orderId;
+    private Long id;
     @Temporal(TemporalType.DATE)
     private Date orderPlacedDate;
     @Temporal(TemporalType.DATE)
@@ -17,7 +17,10 @@ public class Orders {
     private String orderStatus;
     private int orderPrice;
 
+    @Column(name = "customer_user_id")
+    private Long userId;
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id",referencedColumnName = "orderId")
+    @JoinColumn(name = "order_id",referencedColumnName = "id")
     private List<OrderItem> orderItem;
 }

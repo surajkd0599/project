@@ -7,24 +7,28 @@ import java.util.Set;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int cartId;
+    private int id;
 
     private int quantity;
 
     private Long totalAmount;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id",referencedColumnName = "cartId")
+    @JoinColumn(name = "cart_id",referencedColumnName = "id")
     private Set<CartItem> cartItem;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_user_id")
+    private Customer customer;
 
     private String isWishlistItem;
 
-    public int getCartId() {
-        return cartId;
+    public int getId() {
+        return id;
     }
 
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getQuantity() {

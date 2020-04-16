@@ -1,12 +1,13 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
+import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.PasswordToken;
 import com.ttn.bootcamp.project.ecommerce.models.User;
 import com.ttn.bootcamp.project.ecommerce.models.UserAttempts;
 import com.ttn.bootcamp.project.ecommerce.repos.PasswordRepo;
 import com.ttn.bootcamp.project.ecommerce.repos.UserAttemptRepo;
-import com.ttn.bootcamp.project.ecommerce.repos.UserRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class ForgotPasswordService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepo;
 
     @Autowired
     private PasswordRepo forgotPasswordRepo;
@@ -36,7 +37,7 @@ public class ForgotPasswordService {
 
     public String sendToken(String email){
         StringBuilder sb = new StringBuilder();
-        User user = userRepository.findByEmail(email);
+        User user = userRepo.findByEmail(email);
         PasswordToken existingUser = forgotPasswordRepo.findByUserEmail(email);
         try {
             if(null!=user){
@@ -58,7 +59,7 @@ public class ForgotPasswordService {
 
                     sb.append("Change your password");
                 }else {
-                    sb.append("Account is not active");
+                    throw new BadRequestException("Account is not active");
                 }
             }
         } catch (NullPointerException ex){
@@ -81,9 +82,9 @@ public class ForgotPasswordService {
                     if (password.equals(confirmPassword)) {
                         boolean flag = isTokenExpired(email, userData);
                         if (!flag) {
-                            user = userRepository.findByEmail(userData.getUserEmail());
+                            user = userRepo.findByEmail(userData.getUserEmail());
                             user.setPassword(passwordEncoder.encode(password));
-                            userRepository.save(user);
+                            userRepo.save(user);
                             forgotPasswordRepo.deleteByUserEmail(email);
 
                             UserAttempts userAttempt = userAttemptRepo.findByUsername(email);
@@ -92,7 +93,7 @@ public class ForgotPasswordService {
                                     userAttemptRepo.deleteByUsername(email);
                                     if (!(user.isAccountNonLocked())) {
                                         user.setAccountNonLocked(true);
-                                        userRepository.save(user);
+                                        userRepo.save(user);
                                         sendEmail.sendEmail("Account Unlocked and password changed", "Your password is successfully changed and account is unlocked.", email);
                                     } else {
                                         sendEmail.sendEmail("Password Changed", "Your password has changed", email);
@@ -103,13 +104,13 @@ public class ForgotPasswordService {
 
                             sb.append("Password successfully changed");
                         } else {
-                            sb.append("Password not updated as token expired");
+                            throw new BadRequestException("Password not updated as token expired");
                         }
                     } else {
-                        sb.append("Password not matched");
+                        throw new BadRequestException("Password not matched");
                     }
                 } else {
-                    sb.append("Invalid Token");
+                    throw new BadRequestException("Invalid Token");
                 }
             }
         }catch (NullPointerException ex){

@@ -7,7 +7,7 @@ public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long OrderItemId;
+    private Long id;
     private int quantity;
 
     @OneToOne(cascade = CascadeType.ALL)

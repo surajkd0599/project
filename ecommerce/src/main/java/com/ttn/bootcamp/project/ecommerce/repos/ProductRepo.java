@@ -1,6 +1,5 @@
 package com.ttn.bootcamp.project.ecommerce.repos;
 
-import com.ttn.bootcamp.project.ecommerce.models.Product;
 import com.ttn.bootcamp.project.ecommerce.models.ProductCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,13 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductCategory, Long> {
+public interface ProductRepo extends JpaRepository<ProductCategory, Long> {
 
-    ProductCategory save(ProductCategory productCategory);
+    /*ProductCategory save(ProductCategory productCategory);
 
-    Product findByCategoryId(Long categoryid);
+    Optional<ProductCategory> findById(Long id);
 
     @Query("from ProductCategory pc where pc.categoryName=:name")
     List<Object[]> findByName(@Param("name") String name);
@@ -55,5 +55,5 @@ public interface ProductRepository extends JpaRepository<ProductCategory, Long> 
     @Transactional
     @Modifying
     @Query("Update ProductVariation p Set p.stock =:quantity where p.variationId=:variationId")
-    int updateStockByAdmin(@Param("variationId") Long variationId,@Param("quantity") int quantity);
+    int updateStockByAdmin(@Param("variationId") Long variationId,@Param("quantity") int quantity);*/
 }

@@ -6,10 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface SellerRepository extends JpaRepository<Seller,Long> {
+public interface SellerRepo extends JpaRepository<Seller,Long> {
     Page<Seller> findAll(Pageable pageable);
 
-    Seller findByUserId(Long userId);
+    Optional<Seller> findById(Long id);
     Seller findByGst(String gst);
 }

@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/ecommerce/products")
+@RequestMapping(path = "/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
     //@PreAuthorize("hasRole('SELLER')")
-    @GetMapping(path = "/getCategory")
+    /*@GetMapping(path = "/getCategory")
     public List<Object[]> getCategry() {
         return productService.getCategory();
-    }
+    }*//*
 
-   /* @GetMapping(path = "/getProduct/{categoryName}")
+   *//* @GetMapping(path = "/getProduct/{categoryName}")
     public List<Object[]> getProduct(@PathVariable(value = "categoryName") String categoryName) {
         return productService.getProduct(categoryName);
     }
-*/
+*//*
     @GetMapping(path = "/getVariation/{productName}")
     public List<Object[]> getVariation(@PathVariable(value = "productName") String productName) {
         return productService.getVariation(productName);
@@ -43,5 +43,5 @@ public class ProductController {
     public void updateStockByAdmin(@PathVariable(value = "productName")String productName,@RequestBody ProductVariation productVariation)
             {
 
-    }
+    }*/
 }

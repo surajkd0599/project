@@ -16,7 +16,7 @@ import java.util.Set;
 @JsonFilter("CustomerDto-Filter")
 public class CustomerDto {
 
-    private Long userId;
+    private Long id;
 
     private boolean isActive;
 
@@ -155,12 +155,12 @@ public class CustomerDto {
         this.addresses = addresses;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isActive() {

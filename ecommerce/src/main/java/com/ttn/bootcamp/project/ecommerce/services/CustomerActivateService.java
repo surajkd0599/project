@@ -1,10 +1,11 @@
 
 package com.ttn.bootcamp.project.ecommerce.services;
 
+import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.VerificationToken;
 import com.ttn.bootcamp.project.ecommerce.models.User;
-import com.ttn.bootcamp.project.ecommerce.repos.UserRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
 import com.ttn.bootcamp.project.ecommerce.repos.CustomerActivateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class CustomerActivateService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepo;
 
     @Autowired
     private SendEmail sendEmail;
@@ -31,7 +32,6 @@ public class CustomerActivateService {
     @Transactional
     public String activateCustomer(String token) {
 
-
         VerificationToken customerActivate = customerActivateRepo.findByToken(token);
         StringBuilder sb=new StringBuilder();
         User user=null;
@@ -43,14 +43,14 @@ public class CustomerActivateService {
                 if (!email.equals(null)) {
                     boolean flag=isTokenExpired(email, customerActivate);
                     if(!flag) {
-                        user = userRepository.findByEmail(customerActivate.getUserEmail());
+                        user = userRepo.findByEmail(customerActivate.getUserEmail());
                         boolean isActivated= activateCustomer(email,user);
                         if(isActivated)
                         {
                             sb.append("Successfully activated");
                         }
                     }else {
-                        sb.append("Token Expired");
+                        throw new BadRequestException("Token Expired");
                     }
                 }
             } catch (NullPointerException ex) {
@@ -67,7 +67,7 @@ public class CustomerActivateService {
         boolean flag=false;
         try {
             user.setActive(true);
-            userRepository.save(user);
+            userRepo.save(user);
             sendEmail.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", email);
             customerActivateRepo.deleteByUserEmail(email);
             flag=true;
@@ -106,12 +106,12 @@ public class CustomerActivateService {
     @Transactional
     public String resendLink(String email) {
 
-        User user = userRepository.findByEmail(email);
+        User user = userRepo.findByEmail(email);
         StringBuilder sb = new StringBuilder();
         try {
             if (!user.getEmail().equals(null)) {
                 if (user.isActive()) {
-                   return sb.append("Account already active").toString();
+                   throw new BadRequestException("Account already active");
                 }else {
                     customerActivateRepo.deleteByUserEmail(email);
 

@@ -1,14 +1,17 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
+import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.User;
 import com.ttn.bootcamp.project.ecommerce.repos.PasswordRepo;
-import com.ttn.bootcamp.project.ecommerce.repos.UserRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class PasswordService {
@@ -17,7 +20,7 @@ public class PasswordService {
     private PasswordRepo passwordRepo;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepo;
 
     @Autowired
     private SendEmail sendEmail;
@@ -30,24 +33,28 @@ public class PasswordService {
     public String updatePassword(Long userId, String oldPass, String newPass, String confirmPass){
 
         StringBuilder sb = new StringBuilder();
-        User user = userRepository.findByUserId(userId);
+        Optional<User> user = userRepo.findById(userId);
 
-                    if(passwordEncoder.matches(oldPass,user.getPassword())){
+        if (user.isPresent()) {
+            if (passwordEncoder.matches(oldPass, user.get().getPassword())) {
 
-                        if(newPass.equals(confirmPass)){
-                                user.setPassword(passwordEncoder.encode(newPass));
-                                userRepository.save(user);
+                if (newPass.equals(confirmPass)) {
+                    user.get().setPassword(passwordEncoder.encode(newPass));
+                    userRepo.save(user.get());
 
-                                String email = user.getEmail();
-                                sendEmail.sendEmail("Password Changed","Your password has changed",email);
+                    String email = user.get().getEmail();
+                    sendEmail.sendEmail("Password Changed", "Your password has changed", email);
 
-                                sb.append("Password successfully changed");
-                        }else{
-                            sb.append("New password and confirm password not matched");
-                        }
-                    }else {
-                        sb.append("Old password is not correct");
-                    }
+                    sb.append("Password successfully changed");
+                } else {
+                    throw new BadRequestException("New password and confirm password not matched");
+                }
+            } else {
+                throw new BadRequestException("Old password is not correct");
+            }
+        }else {
+            throw new UserNotFoundException("User not found");
+        }
 
         return sb.toString();
     }

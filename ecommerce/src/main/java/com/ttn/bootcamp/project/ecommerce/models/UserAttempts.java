@@ -11,17 +11,17 @@ public class UserAttempts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long attemptId;
+    private Long id;
     private String username;
     private int attempts;
     private Date lastModified;
 
-    public Long getAttemptId() {
-        return attemptId;
+    public Long getId() {
+        return id;
     }
 
-    public void setAttemptId(Long attemptId) {
-        this.attemptId = attemptId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {

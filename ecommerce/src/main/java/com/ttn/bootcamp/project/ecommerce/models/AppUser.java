@@ -8,12 +8,12 @@ import java.util.List;
 
 public class AppUser implements UserDetails {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
     List<GrantedAuthorityImpl> grantedAuthorities;
-    private boolean isEnabled;
-    private boolean isAccountNonLocked;
-    private boolean isCredentialsNonExpired;
+    private final boolean isEnabled;
+    private final boolean isAccountNonLocked;
+    private final boolean isCredentialsNonExpired;
 
     public AppUser(String username, String password, List<GrantedAuthorityImpl> grantedAuthorities,boolean isEnabled, boolean isAccountNonLocked, boolean isCredentialsNonExpired) {
         this.username = username;

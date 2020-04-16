@@ -6,11 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer,Long> {
+public interface CustomerRepo extends JpaRepository<Customer,Long> {
     Page<Customer> findAll(Pageable pageable);
 
-    Customer findByUserId(Long userId);
+    Optional<Customer> findById(Long id);
 
     Customer findByUsername(String username);
 

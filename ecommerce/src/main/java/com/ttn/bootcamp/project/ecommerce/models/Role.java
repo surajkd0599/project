@@ -11,7 +11,7 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long roleId;
+    private Long id;
     private String role;
 
     public Role() {
@@ -21,12 +21,12 @@ public class Role {
         this.role = role;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public Long getId() {
+        return id;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRole() {
@@ -53,7 +53,7 @@ public class Role {
     @Override
     public String toString() {
         return "Role{" +
-                "roleId=" + roleId +
+                "roleId=" + id +
                 ", role='" + role + '\'' +
                 '}';
     }

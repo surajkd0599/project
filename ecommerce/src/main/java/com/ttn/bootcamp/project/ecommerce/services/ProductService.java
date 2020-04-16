@@ -1,21 +1,19 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
 import com.ttn.bootcamp.project.ecommerce.models.ProductCategory;
-import com.ttn.bootcamp.project.ecommerce.repos.ProductRepository;
+import com.ttn.bootcamp.project.ecommerce.repos.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProductService {
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepo productRepo;
 
-    public String addCategory(ProductCategory productCategory){ productRepository.save(productCategory);
+    public String addCategory(ProductCategory productCategory){ productRepo.save(productCategory);
     return "Product added.";}
 
-    public List<Object[]> getCategory(){
+   /* public List<Object[]> getCategory(){
        return productRepository.findCategory();
     }
 
@@ -50,5 +48,5 @@ public class ProductService {
        }
         System.out.println(variationId);
        productRepository.updateStockByAdmin(variationId,quantity);
-    }
+    }*/
 }

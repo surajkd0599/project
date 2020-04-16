@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/ecommerce/register")
+@RequestMapping(path = "/register")
 public class AuthController {
 
     @Autowired
@@ -27,48 +27,25 @@ public class AuthController {
     private DtoService dtoService;
 
     @PostMapping(path = "/customer")
-    public String registerCustomer(@Valid @RequestBody CustomerDto customerDto,HttpServletResponse response){
-        if(dtoService.validateCustomer(customerDto).equals("validated")) {
-             response.setStatus(HttpServletResponse.SC_CREATED);
-             return appUserDetailsService.registerCustomer(customerDto);
-
-        }else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return dtoService.validateCustomer(customerDto);
-        }
+    public String registerCustomer(@Valid @RequestBody CustomerDto customerDto){
+        dtoService.validateCustomer(customerDto);
+        return appUserDetailsService.registerCustomer(customerDto);
     }
 
     @PostMapping(path = "/seller")
-    public String registerSeller(@Valid @RequestBody SellerDto sellerDto,HttpServletResponse response){
-        if(dtoService.validateSeller(sellerDto).equals("validated")) {
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            String message = appUserDetailsService.registerSeller(sellerDto);
-            if (!message.equals("Registration Successful")){
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            }
-            return message;
-        }else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return dtoService.validateSeller(sellerDto);
-        }
+    public String registerSeller(@Valid @RequestBody SellerDto sellerDto){
+        dtoService.validateSeller(sellerDto);
+        return appUserDetailsService.registerSeller(sellerDto);
     }
 
     @PutMapping(path = "/confirm-account")
-    public String confirmCustomerAccount(@RequestParam("token") String token, HttpServletResponse response){
-        String message = customerActivateService.activateCustomer(token);
-        if(!message.equals("Successfully activated")){
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
-        return message;
+    public String confirmCustomerAccount(@RequestParam("token") String token){
+        return customerActivateService.activateCustomer(token);
     }
 
     @PostMapping(path = "/resend-activation")
-    public String resendLink(@RequestParam("email") String email,HttpServletResponse response){
-        String message = customerActivateService.resendLink(email);
-        if(!message.equals("Successful")){
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
-        return message;
+    public String resendLink(@RequestParam("email") String email){
+        return customerActivateService.resendLink(email);
     }
 
     @PostMapping(path = "/admin")

@@ -10,7 +10,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long productId;
+    private Long id;
 
     @Column(unique = true)
     private String productName;
@@ -23,25 +23,23 @@ public class Product {
 
     private boolean isActive;
 
+    private String brand;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "seller_user_id")
     private Seller seller;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id", referencedColumnName = "productId")
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private List<ProductVariation> productVariations;
 
-
-    public Product() {
+    public Long getId() {
+        return id;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getProductName() {
@@ -99,4 +97,13 @@ public class Product {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
 }

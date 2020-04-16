@@ -2,19 +2,19 @@ package com.ttn.bootcamp.project.ecommerce.repos;
 
 import com.ttn.bootcamp.project.ecommerce.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepo extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
-    User findByUserId(Long userId);
+    Optional<User> findById(Long id);
 
     User findByEmail(String email);
 
-    //Query to find UserId
+    /*//Query to find UserId
     @Query(value = "SELECT userId FROM User WHERE username=:username")
     Long findUserId(@Param("username") String username);
 
@@ -37,5 +37,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //To update password
     @Query(value = "UPDATE user SET user.password=:password where user.user_id=:userId",nativeQuery = true)
     void updateUserPassword(@Param("userId") Long userId,@Param("password") String password);
-
+*/
 }

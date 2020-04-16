@@ -6,19 +6,19 @@ import javax.persistence.*;
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long itemId;
+    private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "variation_Id")
     //private List<ProductVariation> productVariation;
     private ProductVariation productVariation;
 
-    public Long getItemId() {
-        return itemId;
+    public Long getId() {
+        return id;
     }
 
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ProductVariation getProductVariation() {

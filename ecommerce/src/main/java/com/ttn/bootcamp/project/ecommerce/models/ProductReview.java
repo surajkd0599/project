@@ -8,23 +8,25 @@ public class ProductReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long reviewId;
+    private Long id;
     private String comment;
     @Temporal(TemporalType.DATE)
     private Date reviewCreatedAt;
     @Temporal(TemporalType.DATE)
     private Date reviewModifiedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(name = "product_id")
+    private Long productId;
 
-    public Long getReviewId() {
-        return reviewId;
+    @Column(name = "customer_user_id")
+    private Long userId;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getComment() {
@@ -51,11 +53,19 @@ public class ProductReview {
         this.reviewModifiedAt = reviewModifiedAt;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
