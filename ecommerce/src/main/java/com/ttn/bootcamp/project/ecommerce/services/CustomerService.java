@@ -3,7 +3,7 @@ package com.ttn.bootcamp.project.ecommerce.services;
 import com.ttn.bootcamp.project.ecommerce.dtos.AddressDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.CustomerDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.UserProfileDto;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.Address;
 import com.ttn.bootcamp.project.ecommerce.models.Customer;
 import com.ttn.bootcamp.project.ecommerce.repos.AddressRepo;
@@ -42,7 +42,7 @@ public class CustomerService {
 
             return userProfileDto;
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
     }
 
@@ -61,7 +61,7 @@ public class CustomerService {
 
             return mappingJacksonValue;
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
     }
 
@@ -81,7 +81,7 @@ public class CustomerService {
 
             sb.append("User updated");
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
         return sb.toString();
     }
@@ -103,7 +103,7 @@ public class CustomerService {
             sb.append("Address added");
 
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
         return sb.toString();
     }
@@ -120,7 +120,7 @@ public class CustomerService {
             //addressRepo.deleteByAddressId(addressId);
             sb.append("Address deleted");
         }else {
-            throw new UserNotFoundException("Address not found");
+            throw new NotFoundException("Address not found");
         }
         return sb.toString();
     }
@@ -145,11 +145,11 @@ public class CustomerService {
 
                 sb.append("Address updated");
             } else {
-                throw new UserNotFoundException("Address not found");
+                throw new NotFoundException("Address not found");
             }
             return sb.toString();
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
     }

@@ -1,7 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.utils;
 
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
 
 import java.util.HashSet;
 import java.util.Set;

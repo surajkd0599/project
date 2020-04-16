@@ -3,12 +3,11 @@ package com.ttn.bootcamp.project.ecommerce.services;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.ttn.bootcamp.project.ecommerce.dtos.CategoryProjectionDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldValueDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.ProductCategoryDto;
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.*;
 import com.ttn.bootcamp.project.ecommerce.repos.*;
 import com.ttn.bootcamp.project.ecommerce.utils.Utility;
@@ -17,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CategoryService {
@@ -30,156 +31,177 @@ public class CategoryService {
     private UserRepo userRepo;
 
     @Autowired
-    private ProductCategoryRepo productCategoryRepo;
-
-    @Autowired
-    private SubCategoryRepo subCategoryRepo;
+    private CategoryRepo categoryRepo;
 
     @Autowired
     private CategoryMetaDataFieldValuesRepo categoryMetaDataFieldValuesRepo;
 
-    public String addMetaDataField(MetaDataFieldDto metaDataFieldDto){
+    public String addMetaDataField(MetaDataFieldDto metaDataFieldDto) {
 
         StringBuilder sb = new StringBuilder();
-            CategoryMetaDataField categoryMetaDataField = categoryMetaDataFieldRepo.findByName(metaDataFieldDto.getName());
+        CategoryMetaDataField categoryMetaDataField = categoryMetaDataFieldRepo.findByName(metaDataFieldDto.getName());
 
-            if(categoryMetaDataField != null){
-                throw new BadRequestException("Field name already exist");
-            }else {
-                CategoryMetaDataField categoryMetaDataField1 = new CategoryMetaDataField();
-                BeanUtils.copyProperties(metaDataFieldDto, categoryMetaDataField1);
+        if (categoryMetaDataField != null) {
+            throw new BadRequestException("Field name already exist");
+        } else {
+            CategoryMetaDataField categoryMetaDataField1 = new CategoryMetaDataField();
+            BeanUtils.copyProperties(metaDataFieldDto, categoryMetaDataField1);
 
-                categoryMetaDataFieldRepo.save(categoryMetaDataField1);
+            categoryMetaDataFieldRepo.save(categoryMetaDataField1);
 
-                sb.append("MetaData field added and field id is : ").append(categoryMetaDataField1.getId());
-            }
+            sb.append("MetaData field added and field id is : ").append(categoryMetaDataField1.getId());
+
+            // String.format("MetaData field added and field id is : %L",categoryMetaDataField1.getId());
+        }
         return sb.toString();
     }
 
-    public MappingJacksonValue getMetaDataFields(){
+    public MappingJacksonValue getMetaDataFields() {
 
-            List<CategoryMetaDataField> categoryMetaDataFields = categoryMetaDataFieldRepo.findAll();
+        List<CategoryMetaDataField> categoryMetaDataFields = categoryMetaDataFieldRepo.findAll();
 
-            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name");
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name");
 
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("MetaData-Filter", filter);
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("MetaData-Filter", filter);
 
-            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryMetaDataFields);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryMetaDataFields);
 
-            mappingJacksonValue.setFilters(filterProvider);
+        mappingJacksonValue.setFilters(filterProvider);
 
-            return mappingJacksonValue;
+        return mappingJacksonValue;
     }
 
-    public String addCategory(ProductCategoryDto productCategoryDto){
+    public String addCategory(ProductCategoryDto productCategoryDto) {
 
         StringBuilder sb = new StringBuilder();
-            ProductCategory productCategory = productCategoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
-            if(productCategory != null){
-                sb.append("Category name already exist");
-            }else {
-                ProductCategory productCategory1 = new ProductCategory();
-                BeanUtils.copyProperties(productCategoryDto,productCategory1);
+        Category category = categoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
+        if (category != null) {
+            sb.append("Category name already exist");
+        } else {
+            Category category1 = new Category();
+            BeanUtils.copyProperties(productCategoryDto, category1);
 
-                productCategoryRepo.save(productCategory1);
+            categoryRepo.save(category1);
 
-                sb.append("Category field added and category id is : ").append(productCategory1.getId());
-            }
+            sb.append("Category field added and category id is : ").append(category1.getId());
+        }
         return sb.toString();
     }
 
-    public ProductCategory getCategoryById(Long categoryId){
+    public Category getCategoryById(Long categoryId) {
 
-            Optional<ProductCategory> productCategory = productCategoryRepo.findById(categoryId);
+        Optional<Category> productCategory = categoryRepo.findById(categoryId);
 
-            if(productCategory.isPresent()){
-                return productCategory.get();
-            }else {
-                throw new UserNotFoundException("Category not found");
-            }
+        if (productCategory.isPresent()) {
+            return productCategory.get();
+        } else {
+            throw new NotFoundException("Category not found");
+        }
     }
 
-    public List<ProductCategory> getCategory(){
-            return productCategoryRepo.findAll();
+    public Set<ProductCategoryDto> getCategory() {
+       List<Category> categories = categoryRepo.findAll();
+
+        Set<ProductCategoryDto> productCategoryDtos = new HashSet<>();
+
+        for(Category category : categories){
+            ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+            BeanUtils.copyProperties(category,productCategoryDto);
+            productCategoryDtos.add(productCategoryDto);
+        }
+        return productCategoryDtos;
     }
 
-    public String updateCategory(Long categoryId, ProductCategoryDto productCategoryDto){
+    public String updateCategory(Long categoryId, ProductCategoryDto productCategoryDto) {
 
-            Optional<ProductCategory> productCategory = productCategoryRepo.findById(categoryId);
+        Optional<Category> productCategory = categoryRepo.findById(categoryId);
 
-            ProductCategory productCategory1 = productCategoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
-            if(productCategory.isPresent()){
-                    productCategory.get().setCategoryName(productCategoryDto.getCategoryName());
-                    //productCategory.get().setSubCategories(productCategoryDto.getSubCategories());
-                    productCategoryRepo.save(productCategory.get());
-            }else {
-                throw new UserNotFoundException("Product category not found");
-            }
+        Category category1 = categoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
+        if (productCategory.isPresent()) {
+            productCategory.get().setCategoryName(productCategoryDto.getCategoryName());
+            categoryRepo.save(productCategory.get());
+        } else {
+            throw new NotFoundException("Product category not found");
+        }
 
         return "Category added";
     }
 
-    public String addValue(Long categoryId,List<MetaDataFieldValueDto> metaDataFieldValueDtos){
+    public String addValue(Long categoryId, List<MetaDataFieldValueDto> metaDataFieldValueDtos) {
 
-        Optional<ProductCategory> productCategory = productCategoryRepo.findById(categoryId);
+        Optional<Category> category = categoryRepo.findById(categoryId);
 
-        if(productCategory.isPresent()){
-            for(MetaDataFieldValueDto dto : metaDataFieldValueDtos ){
-                Optional<CategoryMetaDataField> metaDataField = categoryMetaDataFieldRepo.findById(dto.getFieldId());
+        if (category.isPresent()) {
+            for (MetaDataFieldValueDto dto : metaDataFieldValueDtos) {
+                Optional<CategoryMetaDataField> categoryMetaDataField = categoryMetaDataFieldRepo.findById(dto.getFieldId());
 
-                if(metaDataField.isPresent()){
-                    CategoryMetaDataFieldValues categoryMetaDataFieldValues=new CategoryMetaDataFieldValues();
+                if (categoryMetaDataField.isPresent()) {
+                    CategoryMetaDataFieldValues categoryMetaDataFieldValues = new CategoryMetaDataFieldValues();
 
                     Utility.checkDuplicates(dto.getValue());
 
-                    categoryMetaDataFieldValues.setCategoryId(categoryId);
-                    categoryMetaDataFieldValues.setFieldId(dto.getFieldId());
+                    categoryMetaDataFieldValues.setCategory(category.get());
+                    categoryMetaDataFieldValues.setCategoryMetaDataField(categoryMetaDataField.get());
                     categoryMetaDataFieldValues.setValue(dto.getValue());
 
                     categoryMetaDataFieldValuesRepo.save(categoryMetaDataFieldValues);
-                }else {
-                    throw new UserNotFoundException("Field id does not exist");
+                } else {
+                    throw new NotFoundException("Field id does not exist");
                 }
 
             }
-        }else {
-            throw new UserNotFoundException("Category id not exist");
+        } else {
+            throw new NotFoundException("Category id not exist");
         }
 
         return "Value added";
     }
 
-    public String updateValue(MetaDataFieldValueDto metaDataFieldValueDto){
+    public String updateValue(MetaDataFieldValueDto metaDataFieldValueDto) {
 
-        Optional<ProductCategory> productCategory = productCategoryRepo.findById(metaDataFieldValueDto.getCategoryId());
+        Optional<Category> productCategory = categoryRepo.findById(metaDataFieldValueDto.getCategoryId());
 
-        if(productCategory.isPresent()){
+        if (productCategory.isPresent()) {
 
-                Optional<CategoryMetaDataField> metaDataField = categoryMetaDataFieldRepo.findById(metaDataFieldValueDto.getFieldId());
+            Optional<CategoryMetaDataField> metaDataField = categoryMetaDataFieldRepo.findById(metaDataFieldValueDto.getFieldId());
 
-                if(metaDataField.isPresent()){
+            if (metaDataField.isPresent()) {
 
-                    Utility.checkDuplicates(metaDataFieldValueDto.getValue());
-                    Optional<CategoryMetaDataFieldValues> valuesExist = categoryMetaDataFieldValuesRepo.findById(metaDataFieldValueDto.getId());
+                Utility.checkDuplicates(metaDataFieldValueDto.getValue());
+                Optional<CategoryMetaDataFieldValues> valuesExist = categoryMetaDataFieldValuesRepo.findById(metaDataFieldValueDto.getCategoryId());
 
-                    if(valuesExist.isPresent()) {
-                        valuesExist.get().setValue(metaDataFieldValueDto.getValue());
-                        categoryMetaDataFieldValuesRepo.save(valuesExist.get());
-                    }else {
-                        throw new BadRequestException("Value does not exist");
-                    }
-                }else {
-                    throw new UserNotFoundException("Field id does not exist");
+                if (valuesExist.isPresent()) {
+                    valuesExist.get().setValue(metaDataFieldValueDto.getValue());
+                    categoryMetaDataFieldValuesRepo.save(valuesExist.get());
+                } else {
+                    throw new BadRequestException("Value does not exist");
                 }
-        }else {
-            throw new UserNotFoundException("Category id not exist");
+            } else {
+                throw new NotFoundException("Field id does not exist");
+            }
+        } else {
+            throw new NotFoundException("Category id not exist");
         }
 
         return "Value updated";
     }
 
     //List of categories
-    public List<CategoryProjectionDto> getCategories(){
-        return productCategoryRepo.findAllCategories();
+    public List<CategoryMetaDataFieldValues> getCategories() {
+        return categoryMetaDataFieldValuesRepo.findAll();
     }
+
+    /*public List<CategoryMetaDataFieldValues> getCategories() {
+        List<CategoryMetaDataFieldValues> categoryMetaDataFieldValues = categoryMetaDataFieldValuesRepo.findAll();
+
+        List<CategoryMetaDataFieldValues> categoryMetaDataFieldValues1 = Arrays.asList(c)
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("product");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Value-Filter",filter);
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryMetaDataFieldValues);
+        mappingJacksonValue.setFilters(filterProvider);
+        return (List<CategoryMetaDataFieldValues>) mappingJacksonValue;
+    }*/
 }

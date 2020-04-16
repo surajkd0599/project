@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.ttn.bootcamp.project.ecommerce.dtos.AddressDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.SellerProfileDto;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.Address;
 import com.ttn.bootcamp.project.ecommerce.models.Seller;
 import com.ttn.bootcamp.project.ecommerce.repos.AddressRepo;
@@ -62,7 +62,7 @@ public class SellerService {
 
             sb.append("User updated");
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
         return sb.toString();
     }
@@ -89,11 +89,11 @@ public class SellerService {
 
                 sb.append("Address updated");
             } else {
-                throw new UserNotFoundException("Address not found");
+                throw new NotFoundException("Address not found");
             }
             return sb.toString();
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
     }

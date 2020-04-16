@@ -1,18 +1,21 @@
 package com.ttn.bootcamp.project.ecommerce.repos;
 
-import com.ttn.bootcamp.project.ecommerce.models.ProductCategory;
+import com.ttn.bootcamp.project.ecommerce.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface ProductRepo extends JpaRepository<ProductCategory, Long> {
+public interface ProductRepo extends JpaRepository<Product, Long> {
+
+    @Query(value = "select p.id from product p where p.brand=:brand AND p.category_id=:categoryId AND p.seller_user_id=:sellerId AND p.product_name=:name",nativeQuery = true)
+    Long findUniqueProduct(@Param("brand")  String brand, @Param("categoryId") Long categoryId,@Param("sellerId") Long sellerId, @Param("name") String name);
+
+    @Query(value = "select * from product where seller_user_id=:userId AND is_deleted=true",nativeQuery = true)
+    List<Product> findAllProducts(@Param("userId") Long userId);
 
     /*ProductCategory save(ProductCategory productCategory);
 

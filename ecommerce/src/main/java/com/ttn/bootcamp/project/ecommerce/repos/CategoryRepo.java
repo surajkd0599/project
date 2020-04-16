@@ -1,7 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.repos;
 
 import com.ttn.bootcamp.project.ecommerce.dtos.CategoryProjectionDto;
-import com.ttn.bootcamp.project.ecommerce.models.ProductCategory;
+import com.ttn.bootcamp.project.ecommerce.models.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductCategoryRepo extends JpaRepository<ProductCategory,Long> {
+public interface CategoryRepo extends JpaRepository<Category,Long> {
 
-    ProductCategory findByCategoryName(String categoryName);
+    Category findByCategoryName(String categoryName);
 
     @Query(value = "select p.id as categoryId,cv.id as valueId,cf.id as fieldId,p.category_name as categoryName,name,value" +
             " from category_meta_data_field_values cv inner join category_meta_data_field cf on cf.id=cv.category_metadata_field_id " +

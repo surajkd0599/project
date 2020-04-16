@@ -1,22 +1,16 @@
 package com.ttn.bootcamp.project.ecommerce.dtos;
 
-public class MetaDataFieldValueDto {
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
-    private Long id;
+public class MetaDataFieldValueDto implements Serializable{
 
     private Long categoryId;
 
     private Long fieldId;
 
+    @NotEmpty
     private String value;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getCategoryId() {
         return categoryId;

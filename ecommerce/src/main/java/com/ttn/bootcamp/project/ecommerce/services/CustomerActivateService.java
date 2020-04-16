@@ -2,7 +2,7 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.VerificationToken;
 import com.ttn.bootcamp.project.ecommerce.models.User;
 import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
@@ -54,7 +54,7 @@ public class CustomerActivateService {
                     }
                 }
             } catch (NullPointerException ex) {
-                throw new UserNotFoundException("No email found");
+                throw new NotFoundException("No email found");
             }
 
         }else{
@@ -131,7 +131,7 @@ public class CustomerActivateService {
                 }
             }
         } catch (NullPointerException ex) {
-            throw new UserNotFoundException("No email found");
+            throw new NotFoundException("No email found");
         }
         return sb.toString();
     }

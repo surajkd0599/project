@@ -12,7 +12,6 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique = true)
     private String productName;
 
     private String description;
@@ -24,14 +23,19 @@ public class Product {
     private boolean isActive;
 
     private String brand;
+    
+    private boolean isDeleted;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "seller_user_id")
     private Seller seller;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ProductVariation> productVariations;
 
     public Long getId() {
@@ -106,4 +110,19 @@ public class Product {
         this.brand = brand;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }

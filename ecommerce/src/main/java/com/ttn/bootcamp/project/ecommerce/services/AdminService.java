@@ -1,8 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
-import com.ttn.bootcamp.project.ecommerce.models.Admin;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.Customer;
 import com.ttn.bootcamp.project.ecommerce.models.Seller;
 import com.ttn.bootcamp.project.ecommerce.models.User;
@@ -37,11 +36,8 @@ public class AdminService {
     @Autowired
     private SendEmail sendEmail;
 
-    public MappingJacksonValue registeredCustomers(Long id, String page,String size, String SortBy){
+    public MappingJacksonValue registeredCustomers( String page, String size, String SortBy) {
 
-        Optional<User> admin = userRepo.findById(id);
-
-        if(admin.isPresent()) {
             List<Customer> customers = customerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
             SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active");
             FilterProvider filterProvider = new SimpleFilterProvider().addFilter("CustomerFilter", filter);
@@ -50,16 +46,10 @@ public class AdminService {
 
             mappingJacksonValue.setFilters(filterProvider);
             return mappingJacksonValue;
-        }else {
-            throw new UserNotFoundException("User not found");
-        }
     }
 
-    public MappingJacksonValue registeredSellers(Long id,String page,String size, String SortBy){
+    public MappingJacksonValue registeredSellers(String page, String size, String SortBy) {
 
-        Optional<User> admin = userRepo.findById(id);
-
-        if(admin.isPresent()) {
             List<Seller> sellers = sellerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
 
             SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active", "companyName", "companyContact", "addresses");
@@ -69,51 +59,48 @@ public class AdminService {
 
             mappingJacksonValue.setFilters(filterProvider);
             return mappingJacksonValue;
-        }else {
-            throw new UserNotFoundException("User not found");
-        }
     }
 
     @Transactional
-    public String activateUser(Long userId){
+    public String activateUser(Long userId) {
         Optional<User> user = userRepo.findById(userId);
         StringBuilder sb = new StringBuilder();
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
             boolean flag = user.get().isActive();
-            if(!flag){
+            if (!flag) {
                 user.get().setActive(true);
                 userRepo.save(user.get());
-                sendEmail.sendEmail("Account Activation","Your account is successfully activated",
+                sendEmail.sendEmail("Account Activation", "Your account is successfully activated",
                         user.get().getEmail());
                 sb.append("Account activated");
-            }else {
+            } else {
                 throw new BadRequestException("User is already activated");
             }
-        }else {
-            throw new UserNotFoundException("User not found");
+        } else {
+            throw new NotFoundException("User not found");
         }
         return sb.toString();
     }
 
     @Transactional
-    public String deactivateUser(Long userId){
+    public String deactivateUser(Long userId) {
         Optional<User> user = userRepo.findById(userId);
         StringBuilder sb = new StringBuilder();
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
             boolean flag = user.get().isActive();
-            if(flag){
+            if (flag) {
                 user.get().setActive(false);
                 userRepo.save(user.get());
-                sendEmail.sendEmail("Account De-Activation","Your account is successfully de-activated",
+                sendEmail.sendEmail("Account De-Activation", "Your account is successfully de-activated",
                         user.get().getEmail());
                 sb.append("Account de-activated");
-            }else {
-               throw new BadRequestException("User is already deActivated");
+            } else {
+                throw new BadRequestException("User is already deActivated");
             }
-        }else {
-            throw new UserNotFoundException("User not found");
+        } else {
+            throw new NotFoundException("User not found");
         }
         return sb.toString();
     }

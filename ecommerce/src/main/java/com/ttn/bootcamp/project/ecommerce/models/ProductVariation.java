@@ -17,6 +17,10 @@ public class ProductVariation {
     private int quantity;
     private boolean isActive;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
@@ -68,5 +72,13 @@ public class ProductVariation {
 
     public void setReview(List<ProductReview> review) {
         this.review = review;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

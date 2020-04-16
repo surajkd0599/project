@@ -1,7 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.User;
 import com.ttn.bootcamp.project.ecommerce.repos.PasswordRepo;
 import com.ttn.bootcamp.project.ecommerce.repos.UserRepo;
@@ -53,7 +53,7 @@ public class PasswordService {
                 throw new BadRequestException("Old password is not correct");
             }
         }else {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         return sb.toString();

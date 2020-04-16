@@ -45,7 +45,7 @@ public class AppUserDetailsService implements UserDetailsService {
     private SendEmail sendEmail;
 
     @Transactional
-    public String registerCustomer(CustomerDto customerDto){
+    public String registerCustomer(CustomerDto customerDto) {
 
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerDto, customer);
@@ -67,32 +67,31 @@ public class AppUserDetailsService implements UserDetailsService {
         customerActivate.setGeneratedDate(new Date());
 
         customerActivateRepo.save(customerActivate);
-        String  email = customer.getEmail();
+        String email = customer.getEmail();
 
-        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN","To confirm your account, please click here : "
-                +"http://localhost:8080/ecommerce/register/confirm-account?token="+token,email);
+        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "To confirm your account, please click here : "
+                + "http://localhost:8080/ecommerce/register/confirm-account?token=" + token, email);
 
         return "Registration Successful";
     }
 
     @Transactional
-    public String  registerSeller(SellerDto sellerDto){
+    public String registerSeller(SellerDto sellerDto) {
         Seller seller = new Seller();
         BeanUtils.copyProperties(sellerDto, seller);
 
-        if(seller.getAddresses().size() == 1) {
+        if (seller.getAddresses().size() == 1) {
             String pass = passwordEncoder.encode(seller.getPassword());
             seller.setPassword(pass);
             sellerRepo.save(seller);
             return "Registration Successful";
-        }else {
+        } else {
             throw new BadRequestException("Seller cannot have multiple addresses");
         }
     }
 
     @Transactional
-    public User registerAdmin(Admin admin)
-    {
+    public User registerAdmin(Admin admin) {
         String pass = passwordEncoder.encode(admin.getPassword());
         admin.setPassword(pass);
         return adminRepo.save(admin);
@@ -101,7 +100,7 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails userDetails = userDao.loadUserByUsername(username);
-        System.out.println("User Details : "+userDetails);
+        System.out.println("User Details : " + userDetails);
         return userDetails;
     }
 

@@ -1,6 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.authentications;
 
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.services.UserAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -54,7 +54,7 @@ public class AuthenticationListener implements ApplicationListener<AbstractAuthe
             if(username != null){
                 userAttemptService.userLoginAttempt(username);
             }else {
-                throw new UserNotFoundException("Email not found");
+                throw new NotFoundException("Email not found");
             }
         }
     }

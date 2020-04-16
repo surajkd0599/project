@@ -1,10 +1,13 @@
 package com.ttn.bootcamp.project.ecommerce.controllers;
 
 import com.ttn.bootcamp.project.ecommerce.dtos.AddressDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.CategoryProjectionDto;
+import com.ttn.bootcamp.project.ecommerce.dtos.ProductDto;
+import com.ttn.bootcamp.project.ecommerce.dtos.ProductViewDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.SellerProfileDto;
+import com.ttn.bootcamp.project.ecommerce.models.CategoryMetaDataFieldValues;
 import com.ttn.bootcamp.project.ecommerce.services.CategoryService;
 import com.ttn.bootcamp.project.ecommerce.services.PasswordService;
+import com.ttn.bootcamp.project.ecommerce.services.ProductService;
 import com.ttn.bootcamp.project.ecommerce.services.SellerService;
 import com.ttn.bootcamp.project.ecommerce.validators.EmailValidator;
 import com.ttn.bootcamp.project.ecommerce.validators.PasswordValidator;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/seller")
@@ -34,6 +38,9 @@ public class SellerController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping(path = "/{userId}")
     public MappingJacksonValue getSellerProfile(@PathVariable(value = "userId") Long userId){
@@ -62,7 +69,22 @@ public class SellerController {
     }
 
     @GetMapping(path = "/categories")
-    public List<CategoryProjectionDto> getCategories(){
+    public List<CategoryMetaDataFieldValues> getCategories(){
         return categoryService.getCategories();
+    }
+
+    @PostMapping(path = "{userId}/category/{categoryId}")
+    public String addProduct(@PathVariable(value = "userId") Long userId, @PathVariable(value = "categoryId") Long categoryId, @Valid @RequestBody ProductDto productDto){
+        return productService.addProduct(userId,categoryId,productDto);
+    }
+
+    @GetMapping(path = "{userId}/product/{productId}")
+    public ProductViewDto viewProduct(@PathVariable(value = "userId") Long userId, @PathVariable(value = "productId") Long productId){
+        return productService.viewProduct(userId, productId);
+    }
+
+    @GetMapping(path = "{userId}/product")
+    public Set<ProductViewDto> viewProducts(@PathVariable(value = "userId") Long userId){
+        return productService.getProducts(userId);
     }
 }

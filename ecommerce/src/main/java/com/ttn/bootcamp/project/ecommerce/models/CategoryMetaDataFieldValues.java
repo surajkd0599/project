@@ -1,28 +1,44 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class CategoryMetaDataFieldValues {
+//@JsonFilter("Value-Filter")
+@Table(name = "category_meta_data_field_value")
+public class CategoryMetaDataFieldValues implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_meta_data_field_id")
+    private CategoryMetaDataField categoryMetaDataField;
+
+
     private String value;
 
-    @Column(name = "category_metadata_field_id")
-    private Long fieldId;
-
-    @Column(name = "category_id")
-    private Long categoryId;
-
-    public Long getId() {
-        return id;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public CategoryMetaDataField getCategoryMetaDataField() {
+        return categoryMetaDataField;
+    }
+
+    public void setCategoryMetaDataField(CategoryMetaDataField categoryMetaDataField) {
+        this.categoryMetaDataField = categoryMetaDataField;
     }
 
     public String getValue() {
@@ -33,19 +49,11 @@ public class CategoryMetaDataFieldValues {
         this.value = value;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Long getFieldId() {
-        return fieldId;
-    }
-
-    public void setFieldId(Long fieldId) {
-        this.fieldId = fieldId;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

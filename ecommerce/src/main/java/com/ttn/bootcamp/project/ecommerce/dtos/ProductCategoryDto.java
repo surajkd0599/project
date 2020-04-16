@@ -1,16 +1,15 @@
 package com.ttn.bootcamp.project.ecommerce.dtos;
 
-import com.ttn.bootcamp.project.ecommerce.models.SubCategory;
-
-import java.util.Set;
+import javax.validation.constraints.NotEmpty;
 
 public class ProductCategoryDto {
 
     private Long id;
 
+    @NotEmpty
     private String categoryName;
 
-    private Set<SubCategory> subCategories;
+    private Long parentId;
 
     public Long getId() {
         return id;
@@ -28,11 +27,11 @@ public class ProductCategoryDto {
         this.categoryName = categoryName;
     }
 
-    public Set<SubCategory> getSubCategories() {
-        return subCategories;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setSubCategories(Set<SubCategory> subCategories) {
-        this.subCategories = subCategories;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 }

@@ -1,6 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.daos;
 
-import com.ttn.bootcamp.project.ecommerce.exceptions.UserNotFoundException;
+import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.AppUser;
 import com.ttn.bootcamp.project.ecommerce.models.GrantedAuthorityImpl;
 import com.ttn.bootcamp.project.ecommerce.models.Role;
@@ -32,7 +32,7 @@ public class UserDao {
                 return new AppUser(user.getEmail(), user.getPassword(),
                         grantedAuthorityImpl, !user.isEnabled(), !user.isCredentialsNonExpired(), user.isAccountNonLocked());
             } else {
-                throw new UserNotFoundException("User not found");
+                throw new NotFoundException("User not found");
             }
         }else {
             throw new RuntimeException("Account is not activated.");

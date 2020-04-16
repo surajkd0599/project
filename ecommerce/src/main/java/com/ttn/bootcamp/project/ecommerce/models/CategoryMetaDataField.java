@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@JsonFilter("MetaData-Filter")
+//@JsonFilter("MetaData-Filter")
 public class CategoryMetaDataField {
 
     @Id
@@ -14,6 +14,9 @@ public class CategoryMetaDataField {
     private Long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "categoryMetaDataField")
+    private Set<CategoryMetaDataFieldValues> categoryMetaDataFieldValues;
 
     public Long getId() {
         return id;

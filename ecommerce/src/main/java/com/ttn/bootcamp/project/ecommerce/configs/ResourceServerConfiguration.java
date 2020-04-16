@@ -58,11 +58,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 "/swagger-ui.html",
                 "/webjars/**").anonymous()
                 .antMatchers("/register/**").anonymous()
-                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/admin/**").permitAll()//.hasAuthority("ADMIN")
                 .antMatchers("/seller/**").hasAuthority("SELLER")
                 .antMatchers("/forgotPassword/**").permitAll()//.hasAnyAuthority("ADMIN","SELLER","CUSTOMER")
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/app/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
+                .antMatchers("/image/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
