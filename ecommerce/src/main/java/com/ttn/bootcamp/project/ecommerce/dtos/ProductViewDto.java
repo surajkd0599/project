@@ -8,11 +8,17 @@ public class ProductViewDto {
 
     private Category category;
 
+    private String companyName;
+
     private String productName;
 
     private String description;
 
     private String brand;
+
+    private boolean isCancellable;
+
+    private boolean isReturnable;
 
     public Long getId() {
         return id;
@@ -52,5 +58,29 @@ public class ProductViewDto {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public boolean isCancellable() {
+        return isCancellable;
+    }
+
+    public void setCancellable(boolean cancellable) {
+        isCancellable = cancellable;
+    }
+
+    public boolean isReturnable() {
+        return isReturnable;
+    }
+
+    public void setReturnable(boolean returnable) {
+        isReturnable = returnable;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

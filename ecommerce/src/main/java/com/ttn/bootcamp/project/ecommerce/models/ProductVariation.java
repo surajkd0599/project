@@ -1,5 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.minidev.json.JSONObject;
 
@@ -13,11 +14,14 @@ public class ProductVariation {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private Long price;
+
+    @Lob
     private JSONObject metadata;
     private int quantity;
     private boolean isActive;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -32,14 +36,6 @@ public class ProductVariation {
 
     public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public JSONObject getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(JSONObject metadata) {
-        this.metadata = metadata;
     }
 
     public Long getId() {
@@ -80,5 +76,13 @@ public class ProductVariation {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public JSONObject getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(JSONObject metadata) {
+        this.metadata = metadata;
     }
 }

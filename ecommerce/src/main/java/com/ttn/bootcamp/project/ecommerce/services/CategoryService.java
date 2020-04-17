@@ -3,6 +3,7 @@ package com.ttn.bootcamp.project.ecommerce.services;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.ttn.bootcamp.project.ecommerce.dtos.CategoryFieldValueDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldValueDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.ProductCategoryDto;
@@ -16,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CategoryService {
@@ -74,57 +72,141 @@ public class CategoryService {
     public String addCategory(ProductCategoryDto productCategoryDto) {
 
         StringBuilder sb = new StringBuilder();
-        Category category = categoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
-        if (category != null) {
-            sb.append("Category name already exist");
+
+        if (productCategoryDto.getParentId() == 0) {
+            Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), productCategoryDto.getParentId());
+
+            if (null != category) {
+                sb.append("Category name already exist");
+            } else {
+                Category category1 = new Category();
+                BeanUtils.copyProperties(productCategoryDto, category1);
+
+                categoryRepo.save(category1);
+
+                sb.append("Category field added and category id is : ").append(category1.getId());
+            }
         } else {
-            Category category1 = new Category();
-            BeanUtils.copyProperties(productCategoryDto, category1);
 
-            categoryRepo.save(category1);
+            Category category = categoryRepo.findExistingCategory1(productCategoryDto.getCategoryName(), productCategoryDto.getParentId());
+            if (null != category) {
+                throw new BadRequestException("Category name already exist");
+            } else {
 
-            sb.append("Category field added and category id is : ").append(category1.getId());
+                Category category1 = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), productCategoryDto.getParentId());
+
+                if (null != category1) {
+                    throw new BadRequestException("Category name already exist");
+                } else {
+                    Category category2 = new Category();
+                    BeanUtils.copyProperties(productCategoryDto, category2);
+
+                    categoryRepo.save(category2);
+
+                    sb.append("Category field added and category id is : ").append(category2.getId());
+                }
+            }
         }
         return sb.toString();
     }
 
-    public Category getCategoryById(Long categoryId) {
+    public List<ProductCategoryDto> getCategoryById(Long categoryId) {
 
-        Optional<Category> productCategory = categoryRepo.findById(categoryId);
+        List<Category> productCategory = categoryRepo.findExistingCategory(categoryId);
 
-        if (productCategory.isPresent()) {
-            return productCategory.get();
+        List<ProductCategoryDto> productCategoryDtos = new ArrayList<>();
+
+        if (null != productCategory) {
+            for (Category category : productCategory) {
+                ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+
+                BeanUtils.copyProperties(category, productCategoryDto);
+                productCategoryDtos.add(productCategoryDto);
+            }
+            return productCategoryDtos;
         } else {
             throw new NotFoundException("Category not found");
         }
     }
 
-    public Set<ProductCategoryDto> getCategory() {
-       List<Category> categories = categoryRepo.findAll();
+
+    /*public Set<ProductCategoryDto> getCategory() {
+        List<Category> categories = categoryRepo.findAll();
 
         Set<ProductCategoryDto> productCategoryDtos = new HashSet<>();
 
-        for(Category category : categories){
+        for (Category category : categories) {
             ProductCategoryDto productCategoryDto = new ProductCategoryDto();
-            BeanUtils.copyProperties(category,productCategoryDto);
+            BeanUtils.copyProperties(category, productCategoryDto);
             productCategoryDtos.add(productCategoryDto);
+        }
+        return productCategoryDtos;
+    }*/
+    public Set<Set<ProductCategoryDto>> getCategory() {
+        List<Category> categories = categoryRepo.findId();
+
+        Set<Set<ProductCategoryDto>> productCategoryDtos = new HashSet<>();
+
+        for (Category category : categories) {
+            List<Category> productCategory = categoryRepo.findExistingCategory(category.getId());
+
+            if (null != productCategory) {
+                Set<ProductCategoryDto> productCategoryDtos1 = new HashSet<>();
+                for (Category category1 : productCategory) {
+                    ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+                    BeanUtils.copyProperties(category1, productCategoryDto);
+                    productCategoryDtos1.add(productCategoryDto);
+                }
+                productCategoryDtos.add(productCategoryDtos1);
+            } else {
+                throw new NotFoundException("Category not found");
+            }
         }
         return productCategoryDtos;
     }
 
     public String updateCategory(Long categoryId, ProductCategoryDto productCategoryDto) {
 
-        Optional<Category> productCategory = categoryRepo.findById(categoryId);
+        StringBuilder sb = new StringBuilder();
 
-        Category category1 = categoryRepo.findByCategoryName(productCategoryDto.getCategoryName());
-        if (productCategory.isPresent()) {
-            productCategory.get().setCategoryName(productCategoryDto.getCategoryName());
-            categoryRepo.save(productCategory.get());
+        Optional<Category> existingCategory = categoryRepo.findById(categoryId);
+
+        if (existingCategory.isPresent()) {
+            if (existingCategory.get().getParentId() == 0) {
+                Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), existingCategory.get().getParentId());
+
+                if (null != category) {
+                    sb.append("Category name already exist");
+                } else {
+                    existingCategory.get().setCategoryName(productCategoryDto.getCategoryName());
+                    categoryRepo.save(existingCategory.get());
+
+                    sb.append("Category updated successfully");
+                }
+            } else {
+
+                Category category = categoryRepo.findExistingCategory1(productCategoryDto.getCategoryName(), existingCategory.get().getParentId());
+                if (null != category) {
+                    throw new BadRequestException("Category name already exist");
+                } else {
+
+                    Category category1 = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), existingCategory.get().getParentId());
+
+                    if (null != category1) {
+                        throw new BadRequestException("Category name already exist");
+                    } else {
+                        existingCategory.get().setCategoryName(productCategoryDto.getCategoryName());
+
+                        categoryRepo.save(existingCategory.get());
+
+                        sb.append("Category updated successfully");
+                    }
+                }
+            }
+            return sb.toString();
         } else {
-            throw new NotFoundException("Product category not found");
+            throw new NotFoundException("Category not found");
         }
-
-        return "Category added";
     }
 
     public String addValue(Long categoryId, List<MetaDataFieldValueDto> metaDataFieldValueDtos) {
@@ -186,10 +268,51 @@ public class CategoryService {
         return "Value updated";
     }
 
-    //List of categories
+    public CategoryFieldValueDto getFieldValueByCategoryId(Long categoryId) {
+        Optional<Category> category = categoryRepo.findById(categoryId);
+        CategoryFieldValueDto categoryFieldValueDto = new CategoryFieldValueDto();
+        Map<String, String> fieldValueMap = new LinkedHashMap<>();
+        if (category.isPresent()) {
+            categoryFieldValueDto.setCategoryId(categoryId);
+            categoryFieldValueDto.setCategoryName(category.get().getCategoryName());
+
+            Set<CategoryMetaDataFieldValues> set = category.get().getCategoryMetaDataFieldValues();
+            for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
+                fieldValueMap.put(categoryMetaDataFieldValues.getCategoryMetaDataField().getName(),
+                        categoryMetaDataFieldValues.getValue());
+            }
+            categoryFieldValueDto.setFieldValueMap(fieldValueMap);
+
+        }
+        return categoryFieldValueDto;
+    }
+
+    public List<CategoryFieldValueDto> getCategories() {
+        List<Category> category = categoryRepo.findAll();
+        List<CategoryFieldValueDto> categoryFieldValueDtoList = new ArrayList<>();
+        Map<String, String> fieldValueMap = new LinkedHashMap<>();
+        if (category.size() > 0) {
+            for (Category categoryInner : category) {
+                    CategoryFieldValueDto categoryFieldValueDto = new CategoryFieldValueDto();
+                    categoryFieldValueDto.setCategoryId(categoryInner.getId());
+                    categoryFieldValueDto.setCategoryName(categoryInner.getCategoryName());
+                    categoryFieldValueDto.setParentId(categoryInner.getParentId());
+                    Set<CategoryMetaDataFieldValues> set = categoryInner.getCategoryMetaDataFieldValues();
+                    for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
+                        fieldValueMap.put(categoryMetaDataFieldValues.getCategoryMetaDataField().getName(),
+                                categoryMetaDataFieldValues.getValue());
+                    }
+                    categoryFieldValueDto.setFieldValueMap(fieldValueMap);
+                    categoryFieldValueDtoList.add(categoryFieldValueDto);
+            }
+        }
+        return categoryFieldValueDtoList;
+    }
+
+    /*//List of categories
     public List<CategoryMetaDataFieldValues> getCategories() {
         return categoryMetaDataFieldValuesRepo.findAll();
-    }
+    }*/
 
     /*public List<CategoryMetaDataFieldValues> getCategories() {
         List<CategoryMetaDataFieldValues> categoryMetaDataFieldValues = categoryMetaDataFieldValuesRepo.findAll();

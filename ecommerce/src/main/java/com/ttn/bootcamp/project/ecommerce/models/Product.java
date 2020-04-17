@@ -1,6 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.List;
@@ -35,6 +36,7 @@ public class Product {
     @JoinColumn(name = "seller_user_id")
     private Seller seller;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ProductVariation> productVariations;
 

@@ -62,6 +62,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/seller/**").hasAuthority("SELLER")
                 .antMatchers("/forgotPassword/**").permitAll()//.hasAnyAuthority("ADMIN","SELLER","CUSTOMER")
                 .antMatchers("/user/**").permitAll()
+                .antMatchers("/test/**").permitAll()
                 .antMatchers("/app/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
                 .antMatchers("/image/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
                 .anyRequest().authenticated()

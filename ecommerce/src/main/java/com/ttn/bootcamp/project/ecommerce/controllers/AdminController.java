@@ -1,12 +1,12 @@
 package com.ttn.bootcamp.project.ecommerce.controllers;
 
-import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldValueDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.ProductCategoryDto;
-import com.ttn.bootcamp.project.ecommerce.models.Category;
-import com.ttn.bootcamp.project.ecommerce.models.CategoryMetaDataFieldValues;
+import com.ttn.bootcamp.project.ecommerce.dtos.*;
+import com.ttn.bootcamp.project.ecommerce.models.ProductVariation;
+import com.ttn.bootcamp.project.ecommerce.repos.ProductVariationRepo;
 import com.ttn.bootcamp.project.ecommerce.services.AdminService;
 import com.ttn.bootcamp.project.ecommerce.services.CategoryService;
+import com.ttn.bootcamp.project.ecommerce.services.ProductService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,13 @@ public class AdminController {
     private AdminService adminService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ProductVariationRepo productVariationRepo;
 
     @GetMapping(path = "/customers")
     public MappingJacksonValue getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10")String size, @RequestParam(defaultValue = "id") String SortBy){
@@ -79,12 +85,12 @@ public class AdminController {
     }
 
     @GetMapping(path = "/category/{categoryId}")
-    public Category getCategoryById(@PathVariable(value = "categoryId")  Long categoryId){
+    public List<ProductCategoryDto> getCategoryById(@PathVariable(value = "categoryId")  Long categoryId){
         return categoryService.getCategoryById(categoryId);
     }
 
     @GetMapping(path = "/category")
-    public Set<ProductCategoryDto> getCategory(){
+    public Set<Set<ProductCategoryDto>> getCategory(){
         return categoryService.getCategory();
     }
 
@@ -102,11 +108,5 @@ public class AdminController {
     public String updateValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto){
         return categoryService.updateValue(metaDataFieldValueDto);
     }
-
-    @GetMapping(path = "/categories")
-    public List<CategoryMetaDataFieldValues> getCategories(){
-        return categoryService.getCategories();
-    }
-
 }
 
