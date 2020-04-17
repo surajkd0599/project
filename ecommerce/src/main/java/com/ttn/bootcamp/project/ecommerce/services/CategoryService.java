@@ -3,10 +3,7 @@ package com.ttn.bootcamp.project.ecommerce.services;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.ttn.bootcamp.project.ecommerce.dtos.CategoryFieldValueDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.MetaDataFieldValueDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.ProductCategoryDto;
+import com.ttn.bootcamp.project.ecommerce.dtos.*;
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.*;
@@ -30,6 +27,9 @@ public class CategoryService {
 
     @Autowired
     private CategoryRepo categoryRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
     @Autowired
     private CategoryMetaDataFieldValuesRepo categoryMetaDataFieldValuesRepo;
@@ -129,19 +129,6 @@ public class CategoryService {
         }
     }
 
-
-    /*public Set<ProductCategoryDto> getCategory() {
-        List<Category> categories = categoryRepo.findAll();
-
-        Set<ProductCategoryDto> productCategoryDtos = new HashSet<>();
-
-        for (Category category : categories) {
-            ProductCategoryDto productCategoryDto = new ProductCategoryDto();
-            BeanUtils.copyProperties(category, productCategoryDto);
-            productCategoryDtos.add(productCategoryDto);
-        }
-        return productCategoryDtos;
-    }*/
     public Set<Set<ProductCategoryDto>> getCategory() {
         List<Category> categories = categoryRepo.findId();
 
@@ -209,7 +196,7 @@ public class CategoryService {
         }
     }
 
-    public String addValue(Long categoryId, List<MetaDataFieldValueDto> metaDataFieldValueDtos) {
+    public String addMetaDataFieldValue(Long categoryId, List<MetaDataFieldValueDto> metaDataFieldValueDtos) {
 
         Optional<Category> category = categoryRepo.findById(categoryId);
 
@@ -239,7 +226,7 @@ public class CategoryService {
         return "Value added";
     }
 
-    public String updateValue(MetaDataFieldValueDto metaDataFieldValueDto) {
+    public String updateMetaDataFieldValue(MetaDataFieldValueDto metaDataFieldValueDto) {
 
         Optional<Category> productCategory = categoryRepo.findById(metaDataFieldValueDto.getCategoryId());
 
@@ -275,6 +262,7 @@ public class CategoryService {
         if (category.isPresent()) {
             categoryFieldValueDto.setCategoryId(categoryId);
             categoryFieldValueDto.setCategoryName(category.get().getCategoryName());
+            categoryFieldValueDto.setParentId(category.get().getParentId());
 
             Set<CategoryMetaDataFieldValues> set = category.get().getCategoryMetaDataFieldValues();
             for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
@@ -286,6 +274,7 @@ public class CategoryService {
         }
         return categoryFieldValueDto;
     }
+
 
     public List<CategoryFieldValueDto> getCategories() {
         List<Category> category = categoryRepo.findAll();
@@ -309,22 +298,38 @@ public class CategoryService {
         return categoryFieldValueDtoList;
     }
 
-    /*//List of categories
-    public List<CategoryMetaDataFieldValues> getCategories() {
-        return categoryMetaDataFieldValuesRepo.findAll();
-    }*/
+    //Api to fetch filtering details
+    public CategoryFilterDto categoryFilter(Long categoryId) {
 
-    /*public List<CategoryMetaDataFieldValues> getCategories() {
-        List<CategoryMetaDataFieldValues> categoryMetaDataFieldValues = categoryMetaDataFieldValuesRepo.findAll();
+        CategoryFilterDto categoryFilterDto = new CategoryFilterDto();
 
-        List<CategoryMetaDataFieldValues> categoryMetaDataFieldValues1 = Arrays.asList(c)
+        Optional<Category> category = categoryRepo.findById(categoryId);
+        CategoryFieldValueDto categoryFieldValueDto = new CategoryFieldValueDto();
+        Map<String, String> fieldValueMap = new LinkedHashMap<>();
+        if (category.isPresent()) {
+            categoryFieldValueDto.setCategoryId(categoryId);
+            categoryFieldValueDto.setCategoryName(category.get().getCategoryName());
+            categoryFieldValueDto.setParentId(category.get().getParentId());
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("product");
+            Set<CategoryMetaDataFieldValues> set = category.get().getCategoryMetaDataFieldValues();
+            for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
+                fieldValueMap.put(categoryMetaDataFieldValues.getCategoryMetaDataField().getName(),
+                        categoryMetaDataFieldValues.getValue());
+            }
+            categoryFieldValueDto.setFieldValueMap(fieldValueMap);
 
-        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Value-Filter",filter);
+            List<Product> products = productRepo.findAllProduct(categoryId);
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryMetaDataFieldValues);
-        mappingJacksonValue.setFilters(filterProvider);
-        return (List<CategoryMetaDataFieldValues>) mappingJacksonValue;
-    }*/
+            List<String> brands = new ArrayList<>();
+            for(Product product : products){
+                brands.add(product.getBrand());
+            }
+            ProductMinMaxPriceDto productMinMaxPriceDto=productRepo.findMinMaxPriceBasedOnCategory(categoryId);
+            categoryFilterDto.setCategoryFieldValueDto(categoryFieldValueDto);
+            categoryFilterDto.setBrands(brands);
+            categoryFilterDto.setMinimumPrice(productMinMaxPriceDto.getMinPrice());
+            categoryFilterDto.setMaximumPrice(productMinMaxPriceDto.getMaxPrice());
+        }
+        return categoryFilterDto;
+    }
 }

@@ -1,5 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.repos;
 
+import com.ttn.bootcamp.project.ecommerce.dtos.ProductMinMaxPriceDto;
 import com.ttn.bootcamp.project.ecommerce.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,46 +21,9 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     @Query(value = "select * from product where category_id=:categoryId",nativeQuery = true)
     List<Product> findAllProduct(@Param("categoryId") Long categoryId);
 
-    /*ProductCategory save(ProductCategory productCategory);
+    @Query(value = "select min(pv.price) as minPrice,max(pv.price) as maxPrice from product p inner join product_variation pv on pv.product_id=p.id where p.category_id=:categoryId group by p.category_id",nativeQuery = true)
+    ProductMinMaxPriceDto findMinMaxPriceBasedOnCategory(@Param("categoryId") Long categoryId);
 
-    Optional<ProductCategory> findById(Long id);
-
-    @Query("from ProductCategory pc where pc.categoryName=:name")
-    List<Object[]> findByName(@Param("name") String name);
-
-    @Query("Select categoryName from ProductCategory")
-    List<Object[]> findCategory();
-
-    //Query for categoryId
-    @Query("Select categoryId from ProductCategory where categoryName=:categoryName")
-    Long categoryId(@Param("categoryName") String categoryName);
-    //Query for productId
-    @Query("Select productId from Product where productName=:productName")
-    Long productId(@Param("productName") String productName);
-
-    //Query to find Product
-    @Query(value = "Select product_name from product where category_id=:categoryId",nativeQuery = true)
-    List<Object[]> findProduct(@Param("categoryId") Long categoryId);
-
-    //Query to find variation
-
-    @Query(value = "Select * from product_variation where product_id=:productId",nativeQuery = true)
-    List<Object[]> findVariation(@Param("productId") Long productId);
-
-    //Query to find low to high based on price
-
-    @Query(value = "Select * from product_variation where product_id=:productId ORDER BY price ASC "
-            ,nativeQuery = true)
-    List<Object[]> priceLowToHigh(@Param("productId") Long productId);
-
-    //Query to find high to low based on price
-    @Query(value = "Select * from product_variation where product_id=:productId ORDER BY price DESC "
-            ,nativeQuery = true)
-    List<Object[]> priceHighToLow(@Param("productId") Long productId);
-
-    //Query to update product stock by admin
-    @Transactional
-    @Modifying
-    @Query("Update ProductVariation p Set p.stock =:quantity where p.variationId=:variationId")
-    int updateStockByAdmin(@Param("variationId") Long variationId,@Param("quantity") int quantity);*/
+    @Query(value = "select * from product p where p.category_id=:categoryId or p.product_name=:productName or p.id in (select pv.product_id from product_variation pv)",nativeQuery = true)
+    List<Product> findSimilarProducts(@Param(value = "categoryId") Long categoryId, @Param(value = "productName") String productName);
 }

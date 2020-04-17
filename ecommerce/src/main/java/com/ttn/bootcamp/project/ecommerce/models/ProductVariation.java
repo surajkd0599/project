@@ -13,7 +13,7 @@ public class ProductVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Long price;
+    private Double price;
 
     @Lob
     private JSONObject metadata;
@@ -30,11 +30,11 @@ public class ProductVariation {
     @JoinColumn(name = "product_id")
     private List<ProductReview> review;
 
-    public Long getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

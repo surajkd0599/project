@@ -97,7 +97,7 @@ public class CustomerService {
             Address address = new Address();
             BeanUtils.copyProperties(addressDto,address);
 
-            address.setDeleted(true);
+            address.setDeleted(false);
             addressRepo.save(address);
 
             sb.append("Address added");
@@ -115,7 +115,7 @@ public class CustomerService {
 
         StringBuilder sb = new StringBuilder();
         if (address.isPresent()){
-            address.get().setDeleted(false);
+            address.get().setDeleted(true);
             addressRepo.save(address.get());
             //addressRepo.deleteByAddressId(addressId);
             sb.append("Address deleted");
@@ -139,7 +139,7 @@ public class CustomerService {
                 Address address = new Address();
                 BeanUtils.copyProperties(addressDto, address);
 
-                address.setDeleted(true);
+                address.setDeleted(false);
 
                 addressRepo.save(address);
 

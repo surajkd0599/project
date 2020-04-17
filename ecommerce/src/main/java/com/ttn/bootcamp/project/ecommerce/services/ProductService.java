@@ -239,7 +239,7 @@ public class ProductService {
                 product.get().setDescription(productViewDto.getDescription());
                 product.get().setReturnable(productViewDto.isReturnable());
                 product.get().setCancellable(productViewDto.isCancellable());
-                product.get().setDeleted(false);
+                product.get().setDeleted(productViewDto.isDeleted());
 
                 productRepo.save(product.get());
 
@@ -433,4 +433,18 @@ public class ProductService {
         }
     }
 
+    public List<Product> getSimilarProducts(Long productId){
+
+        Optional<Product> product = productRepo.findById(productId);
+
+        if(product.isPresent()){
+
+            List<Product> products = productRepo.findSimilarProducts(product.get().getCategory().getId(),product.get().getProductName());
+
+            return products;
+        }else {
+            throw new NotFoundException("Product not found for product id : "+productId);
+        }
+
+    }
 }

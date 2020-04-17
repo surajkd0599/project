@@ -20,6 +20,8 @@ public class ProductViewDto {
 
     private boolean isReturnable;
 
+    private boolean isDeleted;
+
     public Long getId() {
         return id;
     }
@@ -82,5 +84,13 @@ public class ProductViewDto {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

@@ -1,9 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.controllers;
 
-import com.ttn.bootcamp.project.ecommerce.dtos.AllProductDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.CategoryFieldValueDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.ProductVariationDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.ProductVariationGetDto;
+import com.ttn.bootcamp.project.ecommerce.dtos.*;
+import com.ttn.bootcamp.project.ecommerce.models.Product;
 import com.ttn.bootcamp.project.ecommerce.models.ProductVariation;
 import com.ttn.bootcamp.project.ecommerce.repos.ProductVariationRepo;
 import com.ttn.bootcamp.project.ecommerce.services.CategoryService;
@@ -78,5 +76,17 @@ public class TestController {
     @GetMapping(path = "/metadata/{variationId}")
     public JSONObject metadata(@PathVariable(value = "variationId") Long variationId){
         return productVariationRepo.findMetadata(variationId);
+    }
+
+    /////////////////////////////
+    @GetMapping(path = "/category/{categoryId}")
+    public CategoryFilterDto getFilteredCategories(@PathVariable(value = "categoryId") Long categoryId){
+        return categoryService.categoryFilter(categoryId);
+    }
+    ///Similar product api left
+
+    @GetMapping(path = "/similar/{productId}")
+    public List<Product> getSimilarProducts(@PathVariable(value = "productId") Long productId){
+        return productService.getSimilarProducts(productId);
     }
 }

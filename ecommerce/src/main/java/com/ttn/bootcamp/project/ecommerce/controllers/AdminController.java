@@ -1,12 +1,10 @@
 package com.ttn.bootcamp.project.ecommerce.controllers;
 
 import com.ttn.bootcamp.project.ecommerce.dtos.*;
-import com.ttn.bootcamp.project.ecommerce.models.ProductVariation;
 import com.ttn.bootcamp.project.ecommerce.repos.ProductVariationRepo;
 import com.ttn.bootcamp.project.ecommerce.services.AdminService;
 import com.ttn.bootcamp.project.ecommerce.services.CategoryService;
 import com.ttn.bootcamp.project.ecommerce.services.ProductService;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +60,8 @@ public class AdminController {
         return adminService.deactivateUser(id);
     }
 
+    //Category Api's
+
     @PostMapping(path = "/metaDataField")
     public String addMetaDataField(@Valid @RequestBody MetaDataFieldDto metaDataFieldDto){
         return categoryService.addMetaDataField(metaDataFieldDto);
@@ -101,12 +101,12 @@ public class AdminController {
 
     @PostMapping(path = "/value/{categoryId}")
     public String addValue(@PathVariable(value = "categoryId") Long categoryId, @RequestBody List<MetaDataFieldValueDto> metaDataFieldValueDtos){
-        return categoryService.addValue(categoryId,metaDataFieldValueDtos);
+        return categoryService.addMetaDataFieldValue(categoryId,metaDataFieldValueDtos);
     }
 
     @PutMapping(path = "/update")
     public String updateValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto){
-        return categoryService.updateValue(metaDataFieldValueDto);
+        return categoryService.updateMetaDataFieldValue(metaDataFieldValueDto);
     }
 }
 

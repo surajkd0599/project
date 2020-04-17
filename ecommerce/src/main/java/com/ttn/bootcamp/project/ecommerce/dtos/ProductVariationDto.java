@@ -2,15 +2,12 @@ package com.ttn.bootcamp.project.ecommerce.dtos;
 
 import net.minidev.json.JSONObject;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 
 public class ProductVariationDto {
 
     private Long id;
-    private Long price;
+    private Double price;
 
     @Lob
     private JSONObject metadata;
@@ -25,11 +22,11 @@ public class ProductVariationDto {
         this.id = id;
     }
 
-    public Long getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

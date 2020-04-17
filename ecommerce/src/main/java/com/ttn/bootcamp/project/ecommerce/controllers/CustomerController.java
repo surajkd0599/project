@@ -1,9 +1,10 @@
 package com.ttn.bootcamp.project.ecommerce.controllers;
 
-import com.ttn.bootcamp.project.ecommerce.dtos.AddressDto;
-import com.ttn.bootcamp.project.ecommerce.dtos.UserProfileDto;
+import com.ttn.bootcamp.project.ecommerce.dtos.*;
+import com.ttn.bootcamp.project.ecommerce.services.CategoryService;
 import com.ttn.bootcamp.project.ecommerce.services.CustomerService;
 import com.ttn.bootcamp.project.ecommerce.services.PasswordService;
+import com.ttn.bootcamp.project.ecommerce.services.ProductService;
 import com.ttn.bootcamp.project.ecommerce.validators.EmailValidator;
 import com.ttn.bootcamp.project.ecommerce.validators.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -28,6 +30,12 @@ public class CustomerController {
 
     @Autowired
     private PasswordValidator passwordValidator;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @GetMapping(path = "/{userId}")
     public UserProfileDto getCustomerDetails(@PathVariable("userId") Long userId){
@@ -75,5 +83,27 @@ public class CustomerController {
     public String updateAddress(@Valid @RequestBody AddressDto addressDto,@PathVariable(value = "addressId") Long addressId, @PathVariable(value = "userId") Long userId){
         return customerService.updateAddress(addressDto,addressId,userId);
     }
+
+    @GetMapping(path = "/category")
+    public List<CategoryFieldValueDto> getCategories(){
+        return categoryService.getCategories();
+    }
+
+    @GetMapping(path = "/product/{productId}")
+    public List<ProductVariationGetDto> getProduct(@PathVariable(value = "productId") Long productId){
+        return productService.getProductForUser(productId);
+    }
+
+    @GetMapping(path = "{categoryId}/products")
+    public AllProductDto getProducts(@PathVariable(value = "categoryId") Long categoryId){
+        return productService.getAllProductsByCategoryId(categoryId);
+    }
+
+    @GetMapping(path = "/category/{categoryId}")
+    public CategoryFilterDto getFilteredCategories(@PathVariable(value = "categoryId") Long categoryId){
+        return categoryService.categoryFilter(categoryId);
+    }
+    ///Similar product api left
+
 
 }
