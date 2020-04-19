@@ -3,7 +3,7 @@ package com.ttn.bootcamp.project.ecommerce.dtos;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
-public class MetaDataFieldValueDto implements Serializable{
+public class MetaDataFieldValueDto implements Serializable {
 
     private Long categoryId;
 

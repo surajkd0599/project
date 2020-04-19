@@ -1,5 +1,7 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,6 @@ public class Orders {
     private Long userId;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id",referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private List<OrderItem> orderItem;
 }

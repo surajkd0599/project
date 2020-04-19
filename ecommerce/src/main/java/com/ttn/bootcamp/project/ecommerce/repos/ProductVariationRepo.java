@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Repository
-public interface ProductVariationRepo extends JpaRepository<ProductVariation,Long> {
+public interface ProductVariationRepo extends JpaRepository<ProductVariation, Long> {
 
-    @Query(value = "Select * from product_variation where product_id=:productId",nativeQuery = true)
+    @Query(value = "Select * from product_variation where product_id=:productId", nativeQuery = true)
     List<ProductVariation> findByProductId(@Param("productId") Long productId);
 
     @Query("Select metadata from ProductVariation where id=:variationId")

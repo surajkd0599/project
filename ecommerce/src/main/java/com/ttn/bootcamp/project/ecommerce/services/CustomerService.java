@@ -33,20 +33,21 @@ public class CustomerService {
     @Autowired
     private AddressRepo addressRepo;
 
-    public UserProfileDto getCustomerProfile(Long id){
+    public UserProfileDto getCustomerProfile(Long id) {
         Optional<Customer> customer = customerRepo.findById(id);
 
-        if(customer.isPresent()) {
+        if (customer.isPresent()) {
             UserProfileDto userProfileDto = new UserProfileDto();
             BeanUtils.copyProperties(customer.get(), userProfileDto);
+            userProfileDto.setImage("To see image click on :http://localhost:8080/ecommerce/image/user/" + id);
 
             return userProfileDto;
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
     }
 
-    public MappingJacksonValue getCustomerAddress(Long userId){
+    public MappingJacksonValue getCustomerAddress(Long userId) {
         Optional<Customer> customer = customerRepo.findById(userId);
 
         if (customer.isPresent()) {
@@ -60,18 +61,18 @@ public class CustomerService {
             mappingJacksonValue.setFilters(filterProvider);
 
             return mappingJacksonValue;
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
     }
 
     @Transactional
     @Modifying
-    public String updateCustomer(UserProfileDto userProfileDto, Long userId){
+    public String updateCustomer(UserProfileDto userProfileDto, Long userId) {
         Optional<Customer> customerExist = customerRepo.findById(userId);
 
         StringBuilder sb = new StringBuilder();
-        if(customerExist.isPresent()) {
+        if (customerExist.isPresent()) {
             customerExist.get().setFirstName(userProfileDto.getFirstName());
             customerExist.get().setMobileNo(userProfileDto.getMobileNo());
             customerExist.get().setUsername(userProfileDto.getUsername());
@@ -80,7 +81,7 @@ public class CustomerService {
             customerRepo.save(customerExist.get());
 
             sb.append("User updated");
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
         return sb.toString();
@@ -88,21 +89,21 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String addAddress(AddressDto addressDto, Long userId){
+    public String addAddress(AddressDto addressDto, Long userId) {
         Optional<Customer> customer = customerRepo.findById(userId);
 
         StringBuilder sb = new StringBuilder();
-        if(customer.isPresent()) {
+        if (customer.isPresent()) {
             addressDto.setUserId(userId);
             Address address = new Address();
-            BeanUtils.copyProperties(addressDto,address);
+            BeanUtils.copyProperties(addressDto, address);
 
             address.setDeleted(false);
             addressRepo.save(address);
 
             sb.append("Address added");
 
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
         return sb.toString();
@@ -110,16 +111,16 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String deleteAddress(Long addressId){
+    public String deleteAddress(Long addressId) {
         Optional<Address> address = addressRepo.findById(addressId);
 
         StringBuilder sb = new StringBuilder();
-        if (address.isPresent()){
+        if (address.isPresent()) {
             address.get().setDeleted(true);
             addressRepo.save(address.get());
             //addressRepo.deleteByAddressId(addressId);
             sb.append("Address deleted");
-        }else {
+        } else {
             throw new NotFoundException("Address not found");
         }
         return sb.toString();
@@ -127,11 +128,11 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String updateAddress(AddressDto addressDto, Long addressId,Long userId){
+    public String updateAddress(AddressDto addressDto, Long addressId, Long userId) {
 
         Optional<Customer> customer = customerRepo.findById(userId);
 
-        if(customer.isPresent()) {
+        if (customer.isPresent()) {
             Optional<Address> addressExist = addressRepo.findById(addressId);
             StringBuilder sb = new StringBuilder();
 
@@ -148,7 +149,7 @@ public class CustomerService {
                 throw new NotFoundException("Address not found");
             }
             return sb.toString();
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
 

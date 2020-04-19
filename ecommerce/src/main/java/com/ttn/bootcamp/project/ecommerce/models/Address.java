@@ -1,10 +1,16 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-//@Embeddable
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
+        allowGetters = true)
 public class Address {
 
     @Id
@@ -40,6 +46,15 @@ public class Address {
     private boolean isDeleted;
 
     private int zipCode;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
+
     public Address() {
     }
 
@@ -169,7 +184,7 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
-              //  "addressId=" + addressId +
+                //  "addressId=" + addressId +
                 ", block=" + block +
                 ", plotNumber=" + plotNumber +
                 ", sectorNumber=" + sectorNumber +

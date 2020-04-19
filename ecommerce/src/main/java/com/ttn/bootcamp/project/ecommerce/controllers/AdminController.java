@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -31,82 +32,98 @@ public class AdminController {
     private ProductVariationRepo productVariationRepo;
 
     @GetMapping(path = "/customers")
-    public MappingJacksonValue getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10")String size, @RequestParam(defaultValue = "id") String SortBy){
-        return adminService.registeredCustomers(page, size, SortBy);
+    public MappingJacksonValue getCustomers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sortBy) {
+        return adminService.registeredCustomers(page, size, sortBy);
     }
 
     @GetMapping(path = "/sellers")
-    public MappingJacksonValue getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10")String size, @RequestParam(defaultValue = "id") String SortBy){
-        return adminService.registeredSellers(page, size, SortBy);
+    public MappingJacksonValue getSellers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sortBy) {
+        return adminService.registeredSellers(page, size, sortBy);
     }
 
     @PatchMapping(path = "/activateCustomer/{id}")
-    public String activateCustomer(@PathVariable(value = "id") Long id){
+    public String activateCustomer(@PathVariable(value = "id") Long id) {
         return adminService.activateUser(id);
     }
 
     @PatchMapping(path = "/deActivateCustomer/{id}")
-    public String deactivateCustomer(@PathVariable(value = "id") Long id){
+    public String deactivateCustomer(@PathVariable(value = "id") Long id) {
         return adminService.deactivateUser(id);
     }
 
     @PatchMapping(path = "/activateSeller/{id}")
-    public String activateSeller(@PathVariable(value = "id") Long id){
+    public String activateSeller(@PathVariable(value = "id") Long id) {
         return adminService.activateUser(id);
     }
 
     @PatchMapping(path = "/deActivateSeller/{id}")
-    public String deactivateSeller(@PathVariable(value = "id") Long id){
+    public String deactivateSeller(@PathVariable(value = "id") Long id) {
         return adminService.deactivateUser(id);
     }
 
     //Category Api's
 
     @PostMapping(path = "/metaDataField")
-    public String addMetaDataField(@Valid @RequestBody MetaDataFieldDto metaDataFieldDto){
+    public String addMetaDataField(@Valid @RequestBody MetaDataFieldDto metaDataFieldDto, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return categoryService.addMetaDataField(metaDataFieldDto);
     }
 
-    @GetMapping(path = "/metaData")
-    public MappingJacksonValue getMetaDataField(){
-        return categoryService.getMetaDataFields();
+    @GetMapping(path = "/metaDataField")
+    public MappingJacksonValue getMetaDataField(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "ASC") String order) {
+        return categoryService.getMetaDataFields(page, size, sortBy, order);
     }
 
     @PostMapping(path = "/category")
-    public String addCategory(@RequestBody ProductCategoryDto productCategoryDto, HttpServletResponse response){
-
-        String message = categoryService.addCategory(productCategoryDto);
-
-        if(message.equals("Category name already exist")){
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
-
-        return message;
+    public String addCategory(@RequestBody ProductCategoryDto productCategoryDto, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        return categoryService.addCategory(productCategoryDto);
     }
 
     @GetMapping(path = "/category/{categoryId}")
-    public List<ProductCategoryDto> getCategoryById(@PathVariable(value = "categoryId")  Long categoryId){
+    public List<ProductCategoryDto> getCategoryById(@PathVariable(value = "categoryId") Long categoryId) {
         return categoryService.getCategoryById(categoryId);
     }
 
     @GetMapping(path = "/category")
-    public Set<Set<ProductCategoryDto>> getCategory(){
+    public Set<Set<ProductCategoryDto>> getCategory() {
         return categoryService.getCategory();
     }
 
-    @PutMapping(path = "/update/{categoryId}")
-    public String updateCategory(@PathVariable(value = "categoryId") Long categoryId, @RequestBody ProductCategoryDto productCategoryDto){
+    @PutMapping(path = "/category/{categoryId}")
+    public String updateCategory(@PathVariable(value = "categoryId") Long categoryId, @RequestBody ProductCategoryDto productCategoryDto) {
         return categoryService.updateCategory(categoryId, productCategoryDto);
     }
 
-    @PostMapping(path = "/value/{categoryId}")
-    public String addValue(@PathVariable(value = "categoryId") Long categoryId, @RequestBody List<MetaDataFieldValueDto> metaDataFieldValueDtos){
-        return categoryService.addMetaDataFieldValue(categoryId,metaDataFieldValueDtos);
+    @PostMapping(path = "/category/{categoryId}")
+    public String addFieldValue(@PathVariable(value = "categoryId") Long categoryId, @RequestBody List<MetaDataFieldValueDto> metaDataFieldValueDtos, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        return categoryService.addMetaDataFieldValue(categoryId, metaDataFieldValueDtos);
     }
 
-    @PutMapping(path = "/update")
-    public String updateValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto){
+    @PutMapping(path = "/category")
+    public String updateFieldValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto) {
         return categoryService.updateMetaDataFieldValue(metaDataFieldValueDto);
+    }
+
+    @GetMapping(path = "/product/{productId}")
+    public List<ProductVariationGetDto> getProduct(@PathVariable(value = "productId") Long productId) {
+        return productService.getProductForAdmin(productId);
+    }
+
+    @GetMapping(path = "/{categoryId}/product")
+    public AllProductDto getProducts(@PathVariable(value = "categoryId") Long categoryId) {
+        return productService.getAllProductsByCategoryId(categoryId);
+    }
+
+    @PutMapping(path = "/product/{productId}/deActivate")
+    public String deActivateProduct(@PathVariable(value = "productId") Long productId) {
+        return productService.deActivateProduct(productId);
+    }
+
+    @PutMapping(path = "/product/{productId}/activate")
+    public String activateProduct(@PathVariable(value = "productId") Long productId) {
+        return productService.activateProduct(productId);
     }
 }
 

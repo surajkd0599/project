@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/app")
-public class AppController {
+public class LogOutController {
 
     @Autowired
     private AppUserDetailsService appUserDetailsService;
@@ -20,7 +20,7 @@ public class AppController {
     private TokenStore tokenStore;
 
     @GetMapping("/doLogout")
-    public String logout(HttpServletRequest request){
+    public String logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
             String tokenValue = authHeader.replace("Bearer", "").trim();
@@ -29,14 +29,4 @@ public class AppController {
         }
         return "Logged out successfully";
     }
-
-    @GetMapping("/")
-    public String index(){
-        return "index";
-    }
-
-    /*@PutMapping("/updateUserDetails/{username}")
-    public void updateUserUsername(@PathVariable("username") String username, String userName){
-        appUserDetailsService.updateUserUsername(username,userName);
-    }*/
 }

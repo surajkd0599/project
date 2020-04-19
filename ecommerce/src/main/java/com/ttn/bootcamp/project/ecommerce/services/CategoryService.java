@@ -11,10 +11,16 @@ import com.ttn.bootcamp.project.ecommerce.repos.*;
 import com.ttn.bootcamp.project.ecommerce.utils.Utility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
+
+//, Optional<String> query left
 
 @Service
 public class CategoryService {
@@ -44,6 +50,7 @@ public class CategoryService {
         } else {
             CategoryMetaDataField categoryMetaDataField1 = new CategoryMetaDataField();
             BeanUtils.copyProperties(metaDataFieldDto, categoryMetaDataField1);
+            categoryMetaDataField1.setDateCreated(new Date());
 
             categoryMetaDataFieldRepo.save(categoryMetaDataField1);
 
@@ -54,9 +61,9 @@ public class CategoryService {
         return sb.toString();
     }
 
-    public MappingJacksonValue getMetaDataFields() {
+    public MappingJacksonValue getMetaDataFields(Integer page, Integer size, String sortBy, String order) {
 
-        List<CategoryMetaDataField> categoryMetaDataFields = categoryMetaDataFieldRepo.findAll();
+        List<CategoryMetaDataField> categoryMetaDataFields = categoryMetaDataFieldRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))).getContent();
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name");
 
@@ -73,14 +80,15 @@ public class CategoryService {
 
         StringBuilder sb = new StringBuilder();
 
-        if (productCategoryDto.getParentId() == 0) {
+        if (productCategoryDto.getParentId() == null) {
             Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), productCategoryDto.getParentId());
 
             if (null != category) {
-                sb.append("Category name already exist");
+                throw new BadRequestException("Category name already exist");
             } else {
                 Category category1 = new Category();
                 BeanUtils.copyProperties(productCategoryDto, category1);
+                category1.setDateCreated(new Date());
 
                 categoryRepo.save(category1);
 
@@ -100,6 +108,7 @@ public class CategoryService {
                 } else {
                     Category category2 = new Category();
                     BeanUtils.copyProperties(productCategoryDto, category2);
+                    category2.setDateCreated(new Date());
 
                     categoryRepo.save(category2);
 
@@ -152,6 +161,8 @@ public class CategoryService {
         return productCategoryDtos;
     }
 
+    @Transactional
+    @Modifying
     public String updateCategory(Long categoryId, ProductCategoryDto productCategoryDto) {
 
         StringBuilder sb = new StringBuilder();
@@ -159,7 +170,7 @@ public class CategoryService {
         Optional<Category> existingCategory = categoryRepo.findById(categoryId);
 
         if (existingCategory.isPresent()) {
-            if (existingCategory.get().getParentId() == 0) {
+            if (existingCategory.get().getParentId() == null) {
                 Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), existingCategory.get().getParentId());
 
                 if (null != category) {
@@ -212,6 +223,7 @@ public class CategoryService {
                     categoryMetaDataFieldValues.setCategory(category.get());
                     categoryMetaDataFieldValues.setCategoryMetaDataField(categoryMetaDataField.get());
                     categoryMetaDataFieldValues.setValue(dto.getValue());
+                    categoryMetaDataFieldValues.setDateCreated(new Date());
 
                     categoryMetaDataFieldValuesRepo.save(categoryMetaDataFieldValues);
                 } else {
@@ -226,6 +238,8 @@ public class CategoryService {
         return "Value added";
     }
 
+    @Transactional
+    @Modifying
     public String updateMetaDataFieldValue(MetaDataFieldValueDto metaDataFieldValueDto) {
 
         Optional<Category> productCategory = categoryRepo.findById(metaDataFieldValueDto.getCategoryId());
@@ -275,30 +289,28 @@ public class CategoryService {
         return categoryFieldValueDto;
     }
 
-
     public List<CategoryFieldValueDto> getCategories() {
         List<Category> category = categoryRepo.findAll();
         List<CategoryFieldValueDto> categoryFieldValueDtoList = new ArrayList<>();
-        Map<String, String> fieldValueMap = new LinkedHashMap<>();
         if (category.size() > 0) {
             for (Category categoryInner : category) {
-                    CategoryFieldValueDto categoryFieldValueDto = new CategoryFieldValueDto();
-                    categoryFieldValueDto.setCategoryId(categoryInner.getId());
-                    categoryFieldValueDto.setCategoryName(categoryInner.getCategoryName());
-                    categoryFieldValueDto.setParentId(categoryInner.getParentId());
-                    Set<CategoryMetaDataFieldValues> set = categoryInner.getCategoryMetaDataFieldValues();
-                    for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
-                        fieldValueMap.put(categoryMetaDataFieldValues.getCategoryMetaDataField().getName(),
-                                categoryMetaDataFieldValues.getValue());
-                    }
-                    categoryFieldValueDto.setFieldValueMap(fieldValueMap);
-                    categoryFieldValueDtoList.add(categoryFieldValueDto);
+                Map<String, String> fieldValueMap = new LinkedHashMap<>();
+                CategoryFieldValueDto categoryFieldValueDto = new CategoryFieldValueDto();
+                categoryFieldValueDto.setCategoryId(categoryInner.getId());
+                categoryFieldValueDto.setCategoryName(categoryInner.getCategoryName());
+                categoryFieldValueDto.setParentId(categoryInner.getParentId());
+                Set<CategoryMetaDataFieldValues> set = categoryInner.getCategoryMetaDataFieldValues();
+                for (CategoryMetaDataFieldValues categoryMetaDataFieldValues : set) {
+                    fieldValueMap.put(categoryMetaDataFieldValues.getCategoryMetaDataField().getName(),
+                            categoryMetaDataFieldValues.getValue());
+                }
+                categoryFieldValueDto.setFieldValueMap(fieldValueMap);
+                categoryFieldValueDtoList.add(categoryFieldValueDto);
             }
         }
         return categoryFieldValueDtoList;
     }
 
-    //Api to fetch filtering details
     public CategoryFilterDto categoryFilter(Long categoryId) {
 
         CategoryFilterDto categoryFilterDto = new CategoryFilterDto();
@@ -321,10 +333,10 @@ public class CategoryService {
             List<Product> products = productRepo.findAllProduct(categoryId);
 
             List<String> brands = new ArrayList<>();
-            for(Product product : products){
+            for (Product product : products) {
                 brands.add(product.getBrand());
             }
-            ProductMinMaxPriceDto productMinMaxPriceDto=productRepo.findMinMaxPriceBasedOnCategory(categoryId);
+            ProductMinMaxPriceDto productMinMaxPriceDto = productRepo.findMinMaxPriceBasedOnCategory(categoryId);
             categoryFilterDto.setCategoryFieldValueDto(categoryFieldValueDto);
             categoryFilterDto.setBrands(brands);
             categoryFilterDto.setMinimumPrice(productMinMaxPriceDto.getMinPrice());

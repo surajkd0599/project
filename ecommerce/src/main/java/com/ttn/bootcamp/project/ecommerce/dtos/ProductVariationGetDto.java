@@ -9,10 +9,11 @@ public class ProductVariationGetDto {
     private Long id;
     private Long price;
 
-    @Lob
     private JSONObject metadata;
     private int quantity;
     private boolean isActive;
+
+    private String primaryImage;
 
     private Long productId;
 
@@ -72,5 +73,13 @@ public class ProductVariationGetDto {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getPrimaryImage() {
+        return primaryImage;
+    }
+
+    public void setPrimaryImage(String primaryImage) {
+        this.primaryImage = primaryImage;
     }
 }

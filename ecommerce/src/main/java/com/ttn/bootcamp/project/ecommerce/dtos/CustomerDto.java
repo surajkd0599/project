@@ -44,17 +44,17 @@ public class CustomerDto {
     private String email;
 
     @NotEmpty(message = "Password is required")
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}",message = "Password must be of minimum 8 characters and maximum 15 " +
+    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}", message = "Password must be of minimum 8 characters and maximum 15 " +
             "characters and must contain 1 uppercase letter,1 lowercase letter,1 digit and 1 special character")
     private String password;
 
     @NotEmpty(message = "Password is required")
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}",message = "Password must be of minimum 8 characters and maximum 15 " +
+    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}", message = "Password must be of minimum 8 characters and maximum 15 " +
             "characters and must contain 1 uppercase letter,1 lowercase letter,1 digit and 1 special character")
     private String confirmPassword;
 
     @NotEmpty(message = "Enter your mobile number")
-    @Pattern(regexp="\\d{10}", message="Mobile number is invalid")
+    @Pattern(regexp = "\\d{10}", message = "Mobile number is invalid")
     private String mobileNo;
 
     private boolean isAccountNonLocked;
@@ -103,7 +103,7 @@ public class CustomerDto {
         return gender;
     }
 
-    public void setGender(String  gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 

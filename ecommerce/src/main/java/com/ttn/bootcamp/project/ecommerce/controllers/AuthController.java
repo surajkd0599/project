@@ -3,7 +3,6 @@ package com.ttn.bootcamp.project.ecommerce.controllers;
 import com.ttn.bootcamp.project.ecommerce.dtos.CustomerDto;
 import com.ttn.bootcamp.project.ecommerce.dtos.SellerDto;
 import com.ttn.bootcamp.project.ecommerce.models.Admin;
-import com.ttn.bootcamp.project.ecommerce.models.User;
 import com.ttn.bootcamp.project.ecommerce.services.AppUserDetailsService;
 import com.ttn.bootcamp.project.ecommerce.services.CustomerActivateService;
 import com.ttn.bootcamp.project.ecommerce.services.DtoService;
@@ -27,32 +26,31 @@ public class AuthController {
     private DtoService dtoService;
 
     @PostMapping(path = "/customer")
-    public String registerCustomer(@Valid @RequestBody CustomerDto customerDto){
+    public String registerCustomer(@Valid @RequestBody CustomerDto customerDto, HttpServletResponse response) {
         dtoService.validateCustomer(customerDto);
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return appUserDetailsService.registerCustomer(customerDto);
     }
 
     @PostMapping(path = "/seller")
-    public String registerSeller(@Valid @RequestBody SellerDto sellerDto){
+    public String registerSeller(@Valid @RequestBody SellerDto sellerDto, HttpServletResponse response) {
         dtoService.validateSeller(sellerDto);
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return appUserDetailsService.registerSeller(sellerDto);
     }
 
     @PutMapping(path = "/confirm-account")
-    public String confirmCustomerAccount(@RequestParam("token") String token){
+    public String confirmCustomerAccount(@RequestParam("token") String token) {
         return customerActivateService.activateCustomer(token);
     }
 
-    @PostMapping(path = "/resend-activation")
-    public String resendLink(@RequestParam("email") String email){
+    @PostMapping(path = "/resendActivation")
+    public String resendLink(@Valid @RequestParam("email") String email) {
         return customerActivateService.resendLink(email);
     }
 
     @PostMapping(path = "/admin")
-    public User registerAdmin(@Valid @RequestBody Admin admin){
-
-        User user = appUserDetailsService.registerAdmin(admin);
-
-        return user;
+    public String registerAdmin(@Valid @RequestBody Admin admin) {
+        return appUserDetailsService.registerAdmin(admin);
     }
 }

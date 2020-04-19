@@ -1,14 +1,18 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
-//@JsonFilter("Value-Filter")
+@JsonIgnoreProperties(value = {"updatedAt"},
+        allowGetters = true)
 @Table(name = "category_meta_data_field_value")
-public class CategoryMetaDataFieldValues implements Serializable{
+public class CategoryMetaDataFieldValues implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,8 +26,14 @@ public class CategoryMetaDataFieldValues implements Serializable{
     @JoinColumn(name = "category_meta_data_field_id")
     private CategoryMetaDataField categoryMetaDataField;
 
-
     private String value;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateCreated;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Category getCategory() {
         return category;
@@ -55,5 +65,13 @@ public class CategoryMetaDataFieldValues implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

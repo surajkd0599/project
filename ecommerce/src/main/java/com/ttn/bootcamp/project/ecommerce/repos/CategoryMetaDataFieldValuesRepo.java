@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CategoryMetaDataFieldValuesRepo extends JpaRepository<CategoryMetaDataFieldValues,Long> {
+public interface CategoryMetaDataFieldValuesRepo extends JpaRepository<CategoryMetaDataFieldValues, Long> {
 
     List<CategoryMetaDataFieldValues> findAll();
 }

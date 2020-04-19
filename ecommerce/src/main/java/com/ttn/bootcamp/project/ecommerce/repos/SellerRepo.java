@@ -9,9 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SellerRepo extends JpaRepository<Seller,Long> {
+public interface SellerRepo extends JpaRepository<Seller, Long> {
     Page<Seller> findAll(Pageable pageable);
 
     Optional<Seller> findById(Long id);
+
     Seller findByGst(String gst);
+
+    Seller findByCompanyName(String companyName);
 }

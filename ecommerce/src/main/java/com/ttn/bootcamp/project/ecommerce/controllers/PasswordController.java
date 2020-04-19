@@ -22,20 +22,20 @@ public class PasswordController {
     private PasswordValidator passwordValidator;
 
     @PostMapping(path = "/token/{email}")
-    public String sendToken(@PathVariable("email") String email, HttpServletResponse response){
-        if (emailValidator.validateEmail(email)){
+    public String sendToken(@PathVariable("email") String email, HttpServletResponse response) {
+        if (emailValidator.validateEmail(email)) {
             return forgotPasswordService.sendToken(email);
-        }else {
+        } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Email is not valid";
         }
     }
 
-    @PatchMapping("/reset-password")
-    public String resetPassword(@RequestParam("token") String token, @RequestParam("email") String email, @RequestParam String pass, @RequestParam String cpass,HttpServletResponse response) {
-        if(passwordValidator.validatePassword(pass,cpass)){
+    @PatchMapping("/resetPassword")
+    public String resetPassword(@RequestParam("token") String token, @RequestParam("email") String email, @RequestParam String pass, @RequestParam String cpass, HttpServletResponse response) {
+        if (passwordValidator.validatePassword(pass, cpass)) {
             return forgotPasswordService.resetPassword(email, token, pass, cpass);
-        }else {
+        } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Password must be matched or password must be of minimum 8 characters and maximum 15 characters and must contain 1 uppercase letter,1 lowercase letter,1 digit and 1 special character";
         }

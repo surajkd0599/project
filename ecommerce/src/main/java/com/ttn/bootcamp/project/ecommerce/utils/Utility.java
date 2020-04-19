@@ -7,9 +7,9 @@ import java.util.Set;
 
 public class Utility {
 
-    public static String checkDuplicates(String values){
+    public static String checkDuplicates(String values) {
 
-        if(values != null) {
+        if (values != null) {
             String[] valueArray = values.split(",");
 
             Set<String> set = new HashSet<>();
@@ -21,7 +21,7 @@ public class Utility {
                 }
             }
             return values;
-        }else {
+        } else {
             throw new BadRequestException("Do not pass null value");
         }
     }

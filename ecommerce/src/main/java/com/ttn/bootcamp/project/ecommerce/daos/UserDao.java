@@ -20,11 +20,11 @@ public class UserDao {
     public AppUser loadUserByUsername(String username) {
         User user = userRepo.findByEmail(username);
         System.out.println(user.getPassword());
-        System.out.println("User with authority : "+user+"    "+username);
+        System.out.println("User with authority : " + user + "    " + username);
 
         List<GrantedAuthorityImpl> grantedAuthorityImpl = new ArrayList<>();
 
-        if(user.isActive()) {
+        if (user.isActive()) {
             if (username != null) {
                 for (Role auth : user.getRoles()) {
                     grantedAuthorityImpl.add(new GrantedAuthorityImpl(auth.getRole()));
@@ -34,7 +34,7 @@ public class UserDao {
             } else {
                 throw new NotFoundException("User not found");
             }
-        }else {
+        } else {
             throw new RuntimeException("Account is not activated.");
         }
     }

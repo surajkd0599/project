@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 @Configuration
 @EnableResourceServer
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
     @Autowired
     AppUserDetailsService userDetailsService;
@@ -52,19 +52,19 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/").anonymous()
                 .antMatchers("/v2/api-docs",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/security",
-                "/swagger-ui.html",
-                "/webjars/**").anonymous()
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").anonymous()
                 .antMatchers("/register/**").anonymous()
                 .antMatchers("/admin/**").permitAll()//.hasAuthority("ADMIN")
                 .antMatchers("/seller/**").hasAuthority("SELLER")
                 .antMatchers("/forgotPassword/**").permitAll()//.hasAnyAuthority("ADMIN","SELLER","CUSTOMER")
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/test/**").permitAll()
-                .antMatchers("/app/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
-                .antMatchers("/image/**").hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
+                .antMatchers("/app/**").hasAnyAuthority("ADMIN", "CUSTOMER", "SELLER")
+                .antMatchers("/image/**").permitAll()//.hasAnyAuthority("ADMIN","CUSTOMER","SELLER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

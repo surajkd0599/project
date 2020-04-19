@@ -2,12 +2,17 @@ package com.ttn.bootcamp.project.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.minidev.json.JSONObject;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties(value = {"updatedAt"},
+        allowGetters = true)
 public class ProductVariation {
 
     @Id
@@ -26,9 +31,16 @@ public class ProductVariation {
     private Product product;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private List<ProductReview> review;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateCreated;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Double getPrice() {
         return price;
@@ -84,5 +96,13 @@ public class ProductVariation {
 
     public void setMetadata(JSONObject metadata) {
         this.metadata = metadata;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

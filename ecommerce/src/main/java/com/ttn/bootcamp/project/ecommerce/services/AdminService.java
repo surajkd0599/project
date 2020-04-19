@@ -1,5 +1,6 @@
 package com.ttn.bootcamp.project.ecommerce.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ttn.bootcamp.project.ecommerce.exceptions.BadRequestException;
 import com.ttn.bootcamp.project.ecommerce.exceptions.NotFoundException;
 import com.ttn.bootcamp.project.ecommerce.models.Customer;
@@ -36,29 +37,30 @@ public class AdminService {
     @Autowired
     private SendEmail sendEmail;
 
-    public MappingJacksonValue registeredCustomers( String page, String size, String SortBy) {
 
-            List<Customer> customers = customerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
-            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active");
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("CustomerFilter", filter);
+    public MappingJacksonValue registeredCustomers(Integer page, Integer size, String SortBy) {
 
-            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customers);
+        List<Customer> customers = customerRepo.findAll(PageRequest.of(page, size, Sort.by(SortBy))).getContent();
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active");
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("CustomerFilter", filter);
 
-            mappingJacksonValue.setFilters(filterProvider);
-            return mappingJacksonValue;
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customers);
+
+        mappingJacksonValue.setFilters(filterProvider);
+        return mappingJacksonValue;
     }
 
-    public MappingJacksonValue registeredSellers(String page, String size, String SortBy) {
+    public MappingJacksonValue registeredSellers(Integer page, Integer size, String SortBy) {
 
-            List<Seller> sellers = sellerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy))).getContent();
+        List<Seller> sellers = sellerRepo.findAll(PageRequest.of(page, size, Sort.by(SortBy))).getContent();
 
-            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active", "companyName", "companyContact", "addresses");
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Seller-Filter", filter);
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "lastName", "email", "active", "companyName", "companyContact", "addresses");
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Seller-Filter", filter);
 
-            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellers);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellers);
 
-            mappingJacksonValue.setFilters(filterProvider);
-            return mappingJacksonValue;
+        mappingJacksonValue.setFilters(filterProvider);
+        return mappingJacksonValue;
     }
 
     @Transactional
@@ -71,7 +73,7 @@ public class AdminService {
             if (!flag) {
                 user.get().setActive(true);
                 userRepo.save(user.get());
-                sendEmail.sendEmail("Account Activation", "Your account is successfully activated",
+                sendEmail.sendEmail("Account Activation", "User account is successfully activated",
                         user.get().getEmail());
                 sb.append("Account activated");
             } else {
@@ -93,7 +95,7 @@ public class AdminService {
             if (flag) {
                 user.get().setActive(false);
                 userRepo.save(user.get());
-                sendEmail.sendEmail("Account De-Activation", "Your account is successfully de-activated",
+                sendEmail.sendEmail("Account De-Activation", "User account is successfully de-activated",
                         user.get().getEmail());
                 sb.append("Account de-activated");
             } else {

@@ -1,12 +1,18 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 @Entity
+@JsonIgnoreProperties(value = {"updatedAt"},
+        allowGetters = true)
 public class Category {
 
     @Id
@@ -16,7 +22,7 @@ public class Category {
     private String categoryName;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Product> product;
 
     @JsonIgnore
@@ -24,6 +30,13 @@ public class Category {
     private Set<CategoryMetaDataFieldValues> categoryMetaDataFieldValues;
 
     private Long parentId;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateCreated;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Long getId() {
         return id;
@@ -63,5 +76,13 @@ public class Category {
 
     public void setCategoryMetaDataFieldValues(Set<CategoryMetaDataFieldValues> categoryMetaDataFieldValues) {
         this.categoryMetaDataFieldValues = categoryMetaDataFieldValues;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

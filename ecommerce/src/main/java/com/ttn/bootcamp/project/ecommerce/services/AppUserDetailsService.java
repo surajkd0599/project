@@ -8,6 +8,8 @@ import com.ttn.bootcamp.project.ecommerce.models.*;
 import com.ttn.bootcamp.project.ecommerce.repos.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,6 +46,9 @@ public class AppUserDetailsService implements UserDetailsService {
     @Autowired
     private SendEmail sendEmail;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Transactional
     public String registerCustomer(CustomerDto customerDto) {
 
@@ -69,8 +74,7 @@ public class AppUserDetailsService implements UserDetailsService {
         customerActivateRepo.save(customerActivate);
         String email = customer.getEmail();
 
-        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "To confirm your account, please click here : "
-                + "http://localhost:8080/ecommerce/register/confirm-account?token=" + token, email);
+        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "To confirm your account, please click here : http://localhost:8080/ecommerce/register/confirm-account?token=" + token, email);
 
         return "Registration Successful";
     }
@@ -83,6 +87,11 @@ public class AppUserDetailsService implements UserDetailsService {
         if (seller.getAddresses().size() == 1) {
             String pass = passwordEncoder.encode(seller.getPassword());
             seller.setPassword(pass);
+
+            Set<Role> roles = new HashSet<>();
+            roles.add(new Role("SELLER"));
+
+            seller.setRoles(roles);
             sellerRepo.save(seller);
             return "Registration Successful";
         } else {
@@ -91,10 +100,11 @@ public class AppUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    public User registerAdmin(Admin admin) {
+    public String registerAdmin(Admin admin) {
         String pass = passwordEncoder.encode(admin.getPassword());
         admin.setPassword(pass);
-        return adminRepo.save(admin);
+        adminRepo.save(admin);
+        return messageSource.getMessage("get.created.message", null, LocaleContextHolder.getLocale());
     }
 
     @Override
@@ -103,39 +113,4 @@ public class AppUserDetailsService implements UserDetailsService {
         System.out.println("User Details : " + userDetails);
         return userDetails;
     }
-
-    /*@Transactional
-    @Modifying
-    public void updateUserUsername(String username,String userName){
-        Long userId = userRepository.findUserId(username);
-        userRepository.updateUserUsername(userId,userName);
-    }
-
-    @Transactional
-    @Modifying
-    public void updateUserFirstName(String username,String firstName){
-        Long userId = userRepository.findUserId(username);
-        userRepository.updateUserFirstName(userId,firstName);
-    }
-
-    @Transactional
-    @Modifying
-    public void updateUserLastName(String username,String lastName){
-        Long userId = userRepository.findUserId(username);
-        userRepository.updateUserLastName(userId,lastName);
-    }
-
-    @Transactional
-    @Modifying
-    public void updateUserEmail(String username,String email){
-        Long userId = userRepository.findUserId(username);
-        userRepository.updateUserEmail(userId,email);
-    }
-
-    @Transactional
-    @Modifying
-    public void updateUserPassword(String username,String password){
-        Long userId = userRepository.findUserId(username);
-        userRepository.updateUserPassword(userId,password);
-    }*/
 }

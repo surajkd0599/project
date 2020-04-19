@@ -42,17 +42,17 @@ public class SellerDto {
     private String email;
 
     @NotEmpty(message = "Password is required")
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}",message = "Password must be of minimum 8 characters and maximum 15 " +
+    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}", message = "Password must be of minimum 8 characters and maximum 15 " +
             "characters and must contain 1 uppercase letter,1 lowercase letter,1 digit and 1 special character")
     private String password;
 
     @NotEmpty(message = "Password is required")
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}",message = "Password must be of minimum 8 characters and maximum 15 " +
+    @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%])(?=.*[A-Z]).{8,15}", message = "Password must be of minimum 8 characters and maximum 15 " +
             "characters and must contain 1 uppercase letter,1 lowercase letter,1 digit and 1 special character")
     private String confirmPassword;
 
     @NotEmpty(message = "Must provide gst number")
-    @Pattern(regexp = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",message = "The first 2 digits denote the State Code (01-37) as defined in the Code List for Land Regions.\n" +
+    @Pattern(regexp = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$", message = "The first 2 digits denote the State Code (01-37) as defined in the Code List for Land Regions.\n" +
             "\n" +
             "The next 10 characters pertain to PAN Number in AAAAA9999X format.\n" +
             "\n" +
@@ -64,13 +64,11 @@ public class SellerDto {
     private String gst;
 
     @NotEmpty(message = "Must provide company contact number")
-    @Pattern(regexp="\\d{10}", message="Mobile number is invalid")
+    @Pattern(regexp = "\\d{10}", message = "Mobile number is invalid")
     private String companyContact;
 
     @NotEmpty(message = "Must provide company name")
     private String companyName;
-
-    private Set<Role> roles;
 
     private boolean isAccountNonLocked;
 
@@ -168,14 +166,6 @@ public class SellerDto {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
     }
 
     public boolean isAccountNonLocked() {

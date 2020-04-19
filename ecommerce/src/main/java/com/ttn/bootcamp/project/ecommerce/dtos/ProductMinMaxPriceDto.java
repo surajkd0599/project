@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 public interface ProductMinMaxPriceDto {
 
     Double getMinPrice();
+
     Double getMaxPrice();
 
 }

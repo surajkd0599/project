@@ -26,11 +26,11 @@ public class PasswordService {
     private SendEmail sendEmail;
 
     @Autowired
-    PasswordEncoder passwordEncoder ;
+    PasswordEncoder passwordEncoder;
 
     @Transactional
     @Modifying
-    public String updatePassword(Long userId, String oldPass, String newPass, String confirmPass){
+    public String updatePassword(Long userId, String oldPass, String newPass, String confirmPass) {
 
         StringBuilder sb = new StringBuilder();
         Optional<User> user = userRepo.findById(userId);
@@ -52,7 +52,7 @@ public class PasswordService {
             } else {
                 throw new BadRequestException("Old password is not correct");
             }
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
 

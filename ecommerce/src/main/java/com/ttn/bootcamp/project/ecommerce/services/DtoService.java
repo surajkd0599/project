@@ -19,27 +19,32 @@ public class DtoService {
     @Autowired
     private SellerRepo sellerRepo;
 
-    public void validateCustomer(CustomerDto customerDto){
+    public void validateCustomer(CustomerDto customerDto) {
 
         User user = userRepo.findByEmail(customerDto.getEmail());
-        if (null!=user){
-           throw new BadRequestException("Email already exist");
-        }else if(!customerDto.getPassword().equals(customerDto.getConfirmPassword())){
+        if (null != user) {
+            throw new BadRequestException("Email already exist");
+        } else if (!customerDto.getPassword().equals(customerDto.getConfirmPassword())) {
             throw new BadRequestException("Passswords not matched");
         }
     }
 
-    public void validateSeller(SellerDto sellerDto){
+    public void validateSeller(SellerDto sellerDto) {
 
         User user = userRepo.findByEmail(sellerDto.getEmail());
 
         Seller seller = sellerRepo.findByGst(sellerDto.getGst());
-        if (null!=user){
+
+        Seller seller1 = sellerRepo.findByCompanyName(sellerDto.getCompanyName());
+
+        if (null != user) {
             throw new BadRequestException("Email already exist");
-        }else if(!sellerDto.getPassword().equals(sellerDto.getConfirmPassword())){
+        } else if (!sellerDto.getPassword().equals(sellerDto.getConfirmPassword())) {
             throw new BadRequestException("Passwords not matched");
-        }else if(null!=seller){
+        } else if (null != seller) {
             throw new BadRequestException("Gst number already exist");
+        } else if (null != seller1) {
+            throw new BadRequestException("Company name already exist");
         }
     }
 }

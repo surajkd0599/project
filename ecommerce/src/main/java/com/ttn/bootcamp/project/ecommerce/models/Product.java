@@ -1,12 +1,17 @@
 package com.ttn.bootcamp.project.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties(value = {"updatedAt"},
+        allowGetters = true)
 public class Product {
 
     @Id
@@ -24,7 +29,7 @@ public class Product {
     private boolean isActive;
 
     private String brand;
-    
+
     private boolean isDeleted;
 
     @ManyToOne
@@ -37,8 +42,15 @@ public class Product {
     private Seller seller;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductVariation> productVariations;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateCreated;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Long getId() {
         return id;
@@ -126,5 +138,13 @@ public class Product {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

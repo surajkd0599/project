@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepo extends JpaRepository<Customer,Long> {
+public interface CustomerRepo extends JpaRepository<Customer, Long> {
     Page<Customer> findAll(Pageable pageable);
 
     Optional<Customer> findById(Long id);

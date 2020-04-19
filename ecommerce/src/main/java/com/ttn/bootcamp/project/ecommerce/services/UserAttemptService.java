@@ -25,30 +25,28 @@ public class UserAttemptService {
     private SendEmail sendEmail;
 
     @Transactional
-    public void  userLoginAttempt(String username){
+    public void userLoginAttempt(String username) {
 
-        UserAttempts userAttempt= userAttemptRepo.findByUsername(username);
+        UserAttempts userAttempt = userAttemptRepo.findByUsername(username);
         User user = userRepo.findByEmail(username);
 
-        if (null != user){
-            if(null != userAttempt){
-                int attempt= userAttempt.getAttempts();
-                if(attempt >= MAX_ATTEMPT){
-                    userAttempt.setAttempts(attempt+1);
+        if (null != user) {
+            if (null != userAttempt) {
+                int attempt = userAttempt.getAttempts();
+                if (attempt >= MAX_ATTEMPT) {
+                    userAttempt.setAttempts(attempt + 1);
                     userAttempt.setLastModified(new Date());
                     userAttemptRepo.save(userAttempt);
 
                     user.setAccountNonLocked(false);
-                    sendEmail.sendEmail("ACCOUNT LOCKED","You have done 3 unsuccessful attempts, hence your account is locked." +
-                            "Sorry for the inconvenience. If you are a valid user then try to reset your password ." +
-                            "\"To reset your password, please click here : http://localhost:8080/ecommerce/forgotPassword/token/"+username,user.getEmail());
+                    sendEmail.sendEmail("ACCOUNT LOCKED", "You have done 3 unsuccessful attempts, hence your account is locked Sorry for the inconvenience. If you are a valid user then try to reset your password To reset your password, please click here : http://localhost:8080/ecommerce/forgotPassword/token/" + username, user.getEmail());
                     userRepo.save(user);
-                }else {
-                    userAttempt.setAttempts(attempt+1);
+                } else {
+                    userAttempt.setAttempts(attempt + 1);
                     userAttempt.setLastModified(new Date());
                     userAttemptRepo.save(userAttempt);
                 }
-            }else {
+            } else {
                 UserAttempts userAttempts = new UserAttempts();
                 userAttempts.setLastModified(new Date());
                 userAttempts.setUsername(username);
@@ -60,11 +58,11 @@ public class UserAttemptService {
     }
 
     @Transactional
-    public void  userSuccessAttempt(String username){
-        UserAttempts userAttempt= userAttemptRepo.findByUsername(username);
+    public void userSuccessAttempt(String username) {
+        UserAttempts userAttempt = userAttemptRepo.findByUsername(username);
         User user = userRepo.findByEmail(username);
-        if(null != user){
-            if(null != userAttempt){
+        if (null != user) {
+            if (null != userAttempt) {
                 userAttemptRepo.deleteByUsername(username);
             }
         }

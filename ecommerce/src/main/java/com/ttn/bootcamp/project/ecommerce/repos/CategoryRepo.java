@@ -1,6 +1,8 @@
 package com.ttn.bootcamp.project.ecommerce.repos;
 
 import com.ttn.bootcamp.project.ecommerce.models.Category;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface CategoryRepo extends JpaRepository<Category,Long> {
+public interface CategoryRepo extends JpaRepository<Category, Long> {
 
     @Query("from Category where categoryName=:categoryName AND parentId=:parentId")
     Category findExistingCategory(@Param("categoryName") String categoryName, @Param("parentId") Long parentId);
@@ -21,7 +23,7 @@ public interface CategoryRepo extends JpaRepository<Category,Long> {
     @Query("from Category where categoryName=:categoryName AND id=:parentId")
     Category findExistingCategory1(@Param("categoryName") String categoryName, @Param("parentId") Long parentId);
 
-    @Query("from Category where parentId=0")
+    @Query("from Category where parentId is null")
     List<Category> findId();
 
     @Query("from Category where parent_id=:parentId")

@@ -29,30 +29,30 @@ public class SellerService {
     @Autowired
     private AddressRepo addressRepo;
 
-    public MappingJacksonValue getSellerProfile(Long userId){
+    public MappingJacksonValue getSellerProfile(Long userId) {
         Optional<Seller> seller = sellerRepo.findById(userId);
 
-        if(seller.isPresent()) {
+        if (seller.isPresent()) {
 
-            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("userId","username","firstName","lastName","gst","companyContact","companyName","addresses");
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Seller-Filter",filter);
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("userId", "username", "firstName", "lastName", "gst", "companyContact", "companyName", "addresses");
+            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("Seller-Filter", filter);
 
             MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(seller);
             mappingJacksonValue.setFilters(filterProvider);
 
             return mappingJacksonValue;
-        }else {
+        } else {
             throw new UsernameNotFoundException("User not found");
         }
     }
 
     @Transactional
     @Modifying
-    public String updateSeller(SellerProfileDto sellerProfileDto, Long userId){
+    public String updateSeller(SellerProfileDto sellerProfileDto, Long userId) {
         Optional<Seller> sellerExist = sellerRepo.findById(userId);
 
         StringBuilder sb = new StringBuilder();
-        if(sellerExist.isPresent()) {
+        if (sellerExist.isPresent()) {
             sellerExist.get().setFirstName(sellerProfileDto.getFirstName());
             sellerExist.get().setUsername(sellerProfileDto.getUsername());
             sellerExist.get().setCompanyContact(sellerProfileDto.getCompanyContact());
@@ -61,7 +61,7 @@ public class SellerService {
             sellerRepo.save(sellerExist.get());
 
             sb.append("User updated");
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
         return sb.toString();
@@ -69,11 +69,11 @@ public class SellerService {
 
     @Transactional
     @Modifying
-    public String updateAddress(AddressDto addressDto, Long addressId,Long userId){
+    public String updateAddress(AddressDto addressDto, Long addressId, Long userId) {
 
         Optional<Seller> seller = sellerRepo.findById(userId);
 
-        if(seller.isPresent()) {
+        if (seller.isPresent()) {
             Optional<Address> addressExist = addressRepo.findById(addressId);
             StringBuilder sb = new StringBuilder();
 
@@ -92,7 +92,7 @@ public class SellerService {
                 throw new NotFoundException("Address not found");
             }
             return sb.toString();
-        }else {
+        } else {
             throw new NotFoundException("User not found");
         }
 

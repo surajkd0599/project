@@ -19,8 +19,10 @@ public class UserProfileDto {
     private String lastName;
 
     @NotEmpty(message = "Enter your mobile number")
-    @Pattern(regexp="\\d{10}", message="Mobile number is invalid")
+    @Pattern(regexp = "\\d{10}", message = "Mobile number is invalid")
     private String mobileNo;
+
+    private String image;
 
     public Long getId() {
         return id;
@@ -68,5 +70,13 @@ public class UserProfileDto {
 
     public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

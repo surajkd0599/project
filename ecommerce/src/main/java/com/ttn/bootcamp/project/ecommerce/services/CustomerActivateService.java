@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,23 +34,21 @@ public class CustomerActivateService {
     public String activateCustomer(String token) {
 
         VerificationToken customerActivate = customerActivateRepo.findByToken(token);
-        StringBuilder sb=new StringBuilder();
-        User user=null;
+        StringBuilder sb = new StringBuilder();
+        User user = null;
 
-        if(null!=customerActivate)
-        {
+        if (null != customerActivate) {
             try {
-                String email=customerActivate.getUserEmail();
+                String email = customerActivate.getUserEmail();
                 if (!email.equals(null)) {
-                    boolean flag=isTokenExpired(email, customerActivate);
-                    if(!flag) {
+                    boolean flag = isTokenExpired(email, customerActivate);
+                    if (!flag) {
                         user = userRepo.findByEmail(customerActivate.getUserEmail());
-                        boolean isActivated= activateCustomer(email,user);
-                        if(isActivated)
-                        {
+                        boolean isActivated = activateCustomer(email, user);
+                        if (isActivated) {
                             sb.append("Successfully activated");
                         }
-                    }else {
+                    } else {
                         throw new BadRequestException("Token Expired");
                     }
                 }
@@ -57,32 +56,32 @@ public class CustomerActivateService {
                 throw new NotFoundException("No email found");
             }
 
-        }else{
-            sb.append("Invalid Token");
+        } else {
+            throw new NotFoundException("Invalid Token");
         }
         return sb.toString();
     }
 
-    boolean activateCustomer(String email, User user){
-        boolean flag=false;
+    boolean activateCustomer(String email, User user) {
+        boolean flag = false;
         try {
             user.setActive(true);
             userRepo.save(user);
             sendEmail.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", email);
             customerActivateRepo.deleteByUserEmail(email);
-            flag=true;
-        }catch(Exception e){
+            flag = true;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return flag;
     }
 
-    boolean isTokenExpired(String email, VerificationToken customerActivate ){
+    boolean isTokenExpired(String email, VerificationToken customerActivate) {
 
         Date date = new Date();
         long diff = date.getTime() - customerActivate.getGeneratedDate().getTime();
         long diffHours = diff / (60 * 60 * 1000);
-        boolean flag=false;
+        boolean flag = false;
         // token expire case
         if (diffHours > 24) {
             customerActivateRepo.deleteByUserEmail(email);
@@ -96,9 +95,8 @@ public class CustomerActivateService {
 
             customerActivateRepo.save(localCustomerActivate);
 
-            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN","To confirm your account, please click here : "
-                    +"http://localhost:8080/ecommerce/register/confirm-account?token="+newToken,email);
-            flag=true;
+            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "To confirm your account, please click here : http://localhost:8080/ecommerce/register/confirm-account?token=" + newToken, email);
+            flag = true;
         }
         return flag;
     }
@@ -111,8 +109,8 @@ public class CustomerActivateService {
         try {
             if (!user.getEmail().equals(null)) {
                 if (user.isActive()) {
-                   throw new BadRequestException("Account already active");
-                }else {
+                    throw new BadRequestException("Account already active");
+                } else {
                     customerActivateRepo.deleteByUserEmail(email);
 
                     String newToken = UUID.randomUUID().toString();
@@ -124,8 +122,7 @@ public class CustomerActivateService {
 
                     customerActivateRepo.save(localCustomerActivate);
 
-                    sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN","To confirm your account, please click here : "
-                            +"http://localhost:8080/ecommerce/register/confirm-account?token="+newToken,email);
+                    sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "To confirm your account, please click here : http://localhost:8080/ecommerce/register/confirm-account?token=" + newToken, email);
 
                     sb.append("Successful");
                 }
