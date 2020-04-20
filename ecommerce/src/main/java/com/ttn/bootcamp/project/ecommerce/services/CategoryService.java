@@ -80,7 +80,7 @@ public class CategoryService {
 
         StringBuilder sb = new StringBuilder();
 
-        if (productCategoryDto.getParentId() == null) {
+        if (productCategoryDto.getParentId() == 0) {
             Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), productCategoryDto.getParentId());
 
             if (null != category) {
@@ -170,7 +170,7 @@ public class CategoryService {
         Optional<Category> existingCategory = categoryRepo.findById(categoryId);
 
         if (existingCategory.isPresent()) {
-            if (existingCategory.get().getParentId() == null) {
+            if (existingCategory.get().getParentId() == 0) {
                 Category category = categoryRepo.findExistingCategory(productCategoryDto.getCategoryName(), existingCategory.get().getParentId());
 
                 if (null != category) {
@@ -337,10 +337,13 @@ public class CategoryService {
                 brands.add(product.getBrand());
             }
             ProductMinMaxPriceDto productMinMaxPriceDto = productRepo.findMinMaxPriceBasedOnCategory(categoryId);
+
             categoryFilterDto.setCategoryFieldValueDto(categoryFieldValueDto);
             categoryFilterDto.setBrands(brands);
-            categoryFilterDto.setMinimumPrice(productMinMaxPriceDto.getMinPrice());
-            categoryFilterDto.setMaximumPrice(productMinMaxPriceDto.getMaxPrice());
+            if(productMinMaxPriceDto!=null) {
+                categoryFilterDto.setMinimumPrice(productMinMaxPriceDto.getMinPrice());
+                categoryFilterDto.setMaximumPrice(productMinMaxPriceDto.getMaxPrice());
+            }
         }
         return categoryFilterDto;
     }

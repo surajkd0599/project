@@ -96,13 +96,13 @@ public class AdminController {
     }
 
     @PostMapping(path = "/category/{categoryId}")
-    public String addFieldValue(@PathVariable(value = "categoryId") Long categoryId, @RequestBody List<MetaDataFieldValueDto> metaDataFieldValueDtos, HttpServletResponse response) {
+    public String addMetaDataFieldValue(@PathVariable(value = "categoryId") Long categoryId, @RequestBody List<MetaDataFieldValueDto> metaDataFieldValueDtos, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_CREATED);
         return categoryService.addMetaDataFieldValue(categoryId, metaDataFieldValueDtos);
     }
 
     @PutMapping(path = "/category")
-    public String updateFieldValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto) {
+    public String updateMetaDataFieldValue(@RequestBody MetaDataFieldValueDto metaDataFieldValueDto) {
         return categoryService.updateMetaDataFieldValue(metaDataFieldValueDto);
     }
 

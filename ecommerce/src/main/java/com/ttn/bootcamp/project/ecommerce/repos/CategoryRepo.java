@@ -23,7 +23,7 @@ public interface CategoryRepo extends JpaRepository<Category, Long> {
     @Query("from Category where categoryName=:categoryName AND id=:parentId")
     Category findExistingCategory1(@Param("categoryName") String categoryName, @Param("parentId") Long parentId);
 
-    @Query("from Category where parentId is null")
+    @Query("from Category where parentId =0")
     List<Category> findId();
 
     @Query("from Category where parent_id=:parentId")
