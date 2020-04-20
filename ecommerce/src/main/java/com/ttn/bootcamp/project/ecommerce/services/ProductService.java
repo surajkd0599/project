@@ -62,7 +62,7 @@ public class ProductService {
 
                 productRepo.save(product);
 
-                sendEmail.sendEmail("Activate Product", "Product name is : " + productDto.getProductName() + " and seller is : " + seller.get().getCompanyName() + " and product id is : " + product.getId(), "sd9808006@gmail.com");
+                sendEmail.sendEmail("Activate Product", "Product name is : " + productDto.getProductName() + " and seller is : " + seller.get().getCompanyName() + " and product id is : " + product.getId(), "suraj.dubey@tothenew.com");
 
                 return "Product added successfully";
             } else {

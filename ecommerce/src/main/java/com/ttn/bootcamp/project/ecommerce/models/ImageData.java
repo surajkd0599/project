@@ -24,10 +24,13 @@ public class ImageData {
 
     private String fileName;
 
+    @Lob
     private byte[] primaryImage;
 
+    @Lob
     private byte[] secondaryImage;
 
+    @Lob
     private byte[] profileImage;
 
     @Temporal(TemporalType.TIMESTAMP)

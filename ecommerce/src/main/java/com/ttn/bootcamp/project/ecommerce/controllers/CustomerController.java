@@ -102,8 +102,8 @@ public class CustomerController {
         return categoryService.categoryFilter(categoryId);
     }
 
-    @GetMapping(path = "/product/{productId}/")
-    public List<Product> getSimilarProducts(@PathVariable(value = "productId") Long productId) {
-        return productService.getSimilarProducts(productId);
+    @GetMapping(path = "/products/{productId1}")
+    public List<Product> getSimilarProducts(@PathVariable(value = "productId1") Long productId1) {
+        return productService.getSimilarProducts(productId1);
     }
 }
