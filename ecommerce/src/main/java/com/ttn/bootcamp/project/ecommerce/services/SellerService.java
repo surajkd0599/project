@@ -78,14 +78,14 @@ public class SellerService {
             StringBuilder sb = new StringBuilder();
 
             if (addressExist.isPresent()) {
-                Address address = new Address();
+                BeanUtils.copyProperties(addressDto, addressExist);
 
-                System.out.println("Status deleted : " + addressDto.isActive());
-                BeanUtils.copyProperties(addressDto, address);
+                addressExist.get().setDeleted(false);
 
-                address.setDeleted(true);
+                addressRepo.save(addressExist.get());
 
-                addressRepo.save(address);
+
+                addressRepo.save(addressExist.get());
 
                 sb.append("Address updated");
             } else {

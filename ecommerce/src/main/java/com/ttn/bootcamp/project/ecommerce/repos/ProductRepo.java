@@ -15,7 +15,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     @Query(value = "select p.id from product p where p.brand=:brand AND p.category_id=:categoryId AND p.seller_user_id=:sellerId AND p.product_name=:name", nativeQuery = true)
     Long findUniqueProduct(@Param("brand") String brand, @Param("categoryId") Long categoryId, @Param("sellerId") Long sellerId, @Param("name") String name);
 
-    @Query(value = "select * from product where seller_user_id=:userId AND is_deleted=true", nativeQuery = true)
+    @Query(value = "select * from product where seller_user_id=:userId AND is_deleted=false", nativeQuery = true)
     List<Product> findAllProducts(@Param("userId") Long userId);
 
     @Query(value = "select * from product where category_id=:categoryId", nativeQuery = true)

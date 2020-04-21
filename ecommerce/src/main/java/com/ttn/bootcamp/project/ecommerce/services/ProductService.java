@@ -472,7 +472,6 @@ public class ProductService {
 
     }
 
-    //to validate
     boolean isMetaDataFieldValueSame(ProductVariationDto productVariationDto) {
         boolean isValid = false;
         String inputValue;

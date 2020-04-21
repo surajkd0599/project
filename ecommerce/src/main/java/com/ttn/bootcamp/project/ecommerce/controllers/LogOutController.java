@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/logout")
 public class LogOutController {
 
     @Autowired

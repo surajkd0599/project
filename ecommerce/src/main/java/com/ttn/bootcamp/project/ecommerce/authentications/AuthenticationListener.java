@@ -24,7 +24,7 @@ public class AuthenticationListener implements ApplicationListener<AbstractAuthe
     @Override
     @Transactional
     public void onApplicationEvent(AbstractAuthenticationEvent appEvent) {
-
+        LOGGER.debug("In auth listener appevent");
         if (appEvent instanceof AuthenticationSuccessEvent) {
             AuthenticationSuccessEvent event = (AuthenticationSuccessEvent) appEvent;
 

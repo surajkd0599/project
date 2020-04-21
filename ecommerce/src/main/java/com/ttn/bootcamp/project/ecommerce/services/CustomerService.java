@@ -137,12 +137,11 @@ public class CustomerService {
             StringBuilder sb = new StringBuilder();
 
             if (addressExist.isPresent()) {
-                Address address = new Address();
-                BeanUtils.copyProperties(addressDto, address);
+                BeanUtils.copyProperties(addressDto, addressExist);
 
-                address.setDeleted(false);
+                addressExist.get().setDeleted(false);
 
-                addressRepo.save(address);
+                addressRepo.save(addressExist.get());
 
                 sb.append("Address updated");
             } else {
