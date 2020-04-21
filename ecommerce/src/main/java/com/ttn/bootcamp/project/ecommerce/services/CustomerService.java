@@ -118,7 +118,6 @@ public class CustomerService {
         if (address.isPresent()) {
             address.get().setDeleted(true);
             addressRepo.save(address.get());
-            //addressRepo.deleteByAddressId(addressId);
             sb.append("Address deleted");
         } else {
             throw new NotFoundException("Address not found");
@@ -136,10 +135,10 @@ public class CustomerService {
             Optional<Address> addressExist = addressRepo.findById(addressId);
             StringBuilder sb = new StringBuilder();
 
+            addressDto.setUserId(userId);
+            addressDto.setId(addressId);
             if (addressExist.isPresent()) {
-                BeanUtils.copyProperties(addressDto, addressExist);
-
-                addressExist.get().setDeleted(false);
+                BeanUtils.copyProperties(addressDto, addressExist.get());
 
                 addressRepo.save(addressExist.get());
 

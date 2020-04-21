@@ -77,14 +77,11 @@ public class SellerService {
             Optional<Address> addressExist = addressRepo.findById(addressId);
             StringBuilder sb = new StringBuilder();
 
+            addressDto.setId(addressId);
+            addressDto.setUserId(userId);
+
             if (addressExist.isPresent()) {
-                BeanUtils.copyProperties(addressDto, addressExist);
-
-                addressExist.get().setDeleted(false);
-
-                addressRepo.save(addressExist.get());
-
-
+                BeanUtils.copyProperties(addressDto, addressExist.get());
                 addressRepo.save(addressExist.get());
 
                 sb.append("Address updated");

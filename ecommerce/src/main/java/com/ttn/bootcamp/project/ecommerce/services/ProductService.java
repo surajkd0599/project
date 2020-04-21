@@ -301,7 +301,7 @@ public class ProductService {
                     productVariation.get().setActive(productVariationDto.isActive());
                     productVariation.get().setPrice(productVariationDto.getPrice());
 
-                    //////////// Image is to be added
+                    // Image is being added through another endpoint
 
                     productVariationRepo.save(productVariation.get());
 
